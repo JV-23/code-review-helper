@@ -10,6 +10,11 @@ public class coreApp
 {
     public static void main( String[] args )
     {
-    	System.out.println("Hello World");
+    	serviceApp gitService = new serviceApp();
+        try {
+			gitService.printPubRepositoryPRs();
+		} catch (Exception e) {
+			System.out.println("something broke");
+		}
     }
 }
