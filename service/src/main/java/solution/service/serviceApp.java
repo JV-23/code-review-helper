@@ -1,5 +1,10 @@
 package solution.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +16,12 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 /**
  * Hello world!
@@ -34,6 +45,28 @@ public class serviceApp
 		
 	}
 	
+	public void downloadPublicRepo() throws Exception{
+		String repoUrl = "insert url here";
+		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
+		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
+		
+		System.out.println(cloneDirectoryPath);
+		
+		try {
+		    System.out.println("Cloning "+repoUrl+" into "+repoUrl);
+		    Git.cloneRepository()
+	        	.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)))
+		        .setURI(repoUrl)
+		        .setDirectory(Paths.get(cloneDirectoryPath).toFile())
+		        .setCredentialsProvider(credentialsProvider)
+		        .call();
+		    System.out.println("Completed Cloning");
+		} catch (GitAPIException e) {
+		    System.out.println("Exception occurred while cloning repo");
+		    e.printStackTrace();
+		}
+	}
+	
 	public void printPubRepositoryPRs() throws Exception {
 		Repository pubRepo = repService.getRepository("eclipse", "egit-github");
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
@@ -50,7 +83,7 @@ public class serviceApp
 					System.out.println(f.getFilename());
 					System.out.println(f.getPatch());
 				}
-				
+							
 			}
 			System.out.println("------------------------------------------------------------------------------------------------");
 			

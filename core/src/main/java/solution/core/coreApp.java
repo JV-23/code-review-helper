@@ -12,9 +12,9 @@ public class coreApp
     {
     	serviceApp gitService = new serviceApp();
         try {
-			gitService.printPubRepositoryPRs();
+			gitService.downloadPublicRepo();
 		} catch (Exception e) {
-			System.out.println("something broke");
+			e.printStackTrace();
 		}
     }
 }
