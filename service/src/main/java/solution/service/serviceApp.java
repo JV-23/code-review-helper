@@ -45,8 +45,9 @@ public class serviceApp
 		
 	}
 	
-	public void downloadPublicRepo() throws Exception{
-		String repoUrl = "insert url here";
+	public void downloadStableVersion() throws Exception{
+		//TODO: repository and credentials added by user
+		String repoUrl = "insert repository url";
 		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
 		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
 		
@@ -66,6 +67,40 @@ public class serviceApp
 		    e.printStackTrace();
 		}
 	}
+	
+	public void runStableVersionTests() throws Exception{
+        String command = "cmd.exe /c cd stableVersion && mvn test";
+        
+        Process proc = Runtime.getRuntime().exec(command);
+
+        // Read the output
+
+        BufferedReader reader =  
+              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+        String line = "";
+        while((line = reader.readLine()) != null) {
+            System.out.print(line + "\n");
+        }
+
+        proc.waitFor();
+        /*
+        command = "dir";
+        
+        proc = Runtime.getRuntime().exec(command);
+
+        // Read the output
+
+        reader =  
+              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+        line = "";
+        while((line = reader.readLine()) != null) {
+            System.out.print(line + "\n");
+        }
+
+        proc.waitFor(); 
+	*/}
 	
 	public void printPubRepositoryPRs() throws Exception {
 		Repository pubRepo = repService.getRepository("eclipse", "egit-github");

@@ -12,7 +12,8 @@ public class coreApp
     {
     	serviceApp gitService = new serviceApp();
         try {
-			gitService.downloadPublicRepo();
+			//gitService.downloadStableVersion();
+			gitService.runStableVersionTests();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
