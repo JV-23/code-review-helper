@@ -15,6 +15,7 @@ public class coreApp
 			//gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
         	//gitService.downloadPRVersion();
+        	//gitService.runPRVersionTests();
         	gitService.printPubRepositoryPRs();
 		} catch (Exception e) {
 			e.printStackTrace();

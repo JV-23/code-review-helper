@@ -88,6 +88,7 @@ public class serviceApp
 	
 	public void downloadPRVersion() throws Exception{
 		//TODO: repository, branch and credentials added by user
+		//TODO: can we use the jgit library for this?
 		String repoUrl = "insert repository & branch url";
 		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
 		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
@@ -107,6 +108,15 @@ public class serviceApp
 		    System.out.println("Exception occurred while cloning repo");
 		    e.printStackTrace();
 		}
+		
+		/*$ git fetch origin pull/"pull request number"/head
+		$ git checkout -b pull-request  FETCH_HEAD
+		are the necessary commands to also download changes introduced by pull request
+		*/
+	}
+	
+	public void runPRVersionTests() throws Exception{
+		//TODO: similar to runStableVersionTests
 	}
 	
 	public void printPubRepositoryPRs() throws Exception {
@@ -116,6 +126,7 @@ public class serviceApp
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			System.out.println(pr.getTitle());
 			System.out.println(pr.getUser().getLogin());
+			System.out.println(pr.getUrl());
 			System.out.println(pr.getId() + " ------------------------ ");
 			/*prCommits = prs.getCommits(pubRepo, pr.getNumber());
 			
