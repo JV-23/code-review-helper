@@ -84,32 +84,40 @@ public class serviceApp
         }
 
         proc.waitFor();
-        /*
-        command = "dir";
-        
-        proc = Runtime.getRuntime().exec(command);
-
-        // Read the output
-
-        reader =  
-              new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-        line = "";
-        while((line = reader.readLine()) != null) {
-            System.out.print(line + "\n");
-        }
-
-        proc.waitFor(); 
-	*/}
+	}
+	
+	public void downloadPRVersion() throws Exception{
+		//TODO: repository, branch and credentials added by user
+		String repoUrl = "insert repository & branch url";
+		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
+		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
+		
+		System.out.println(cloneDirectoryPath);
+		
+		try {
+		    System.out.println("Cloning "+repoUrl+" into "+repoUrl);
+		    Git.cloneRepository()
+	        	.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)))
+		        .setURI(repoUrl)
+		        .setDirectory(Paths.get(cloneDirectoryPath).toFile())
+		        .setCredentialsProvider(credentialsProvider)
+		        .call();
+		    System.out.println("Completed Cloning");
+		} catch (GitAPIException e) {
+		    System.out.println("Exception occurred while cloning repo");
+		    e.printStackTrace();
+		}
+	}
 	
 	public void printPubRepositoryPRs() throws Exception {
-		Repository pubRepo = repService.getRepository("eclipse", "egit-github");
+		Repository pubRepo = repService.getRepository("OpenAPITools", "openapi-generator");
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
 		
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			System.out.println(pr.getTitle());
-			System.out.println(pr.getId() + " ------------------------ " + pr.getTitle());
-			prCommits = prs.getCommits(pubRepo, pr.getNumber());
+			System.out.println(pr.getUser().getLogin());
+			System.out.println(pr.getId() + " ------------------------ ");
+			/*prCommits = prs.getCommits(pubRepo, pr.getNumber());
 			
 			for(RepositoryCommit rc : prCommits) {
 				System.out.println(rc.getSha());
@@ -119,7 +127,7 @@ public class serviceApp
 					System.out.println(f.getPatch());
 				}
 							
-			}
+			}*/
 			System.out.println("------------------------------------------------------------------------------------------------");
 			
 		}
