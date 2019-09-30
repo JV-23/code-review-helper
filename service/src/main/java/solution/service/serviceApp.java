@@ -47,7 +47,7 @@ public class serviceApp
 	
 	public void downloadStableVersion() throws Exception{
 		//TODO: repository and credentials added by user
-		String repoUrl = "insert repository url";
+		String repoUrl = "https://github.com/openaudible/openaudible";
 		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
 		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
 		
@@ -87,36 +87,61 @@ public class serviceApp
 	}
 	
 	public void downloadPRVersion() throws Exception{
-		//TODO: repository, branch and credentials added by user
-		//TODO: can we use the jgit library for this?
-		String repoUrl = "insert repository & branch url";
-		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
-		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
-		
-		System.out.println(cloneDirectoryPath);
-		
-		try {
-		    System.out.println("Cloning "+repoUrl+" into "+repoUrl);
-		    Git.cloneRepository()
-	        	.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)))
-		        .setURI(repoUrl)
-		        .setDirectory(Paths.get(cloneDirectoryPath).toFile())
-		        .setCredentialsProvider(credentialsProvider)
-		        .call();
-		    System.out.println("Completed Cloning");
-		} catch (GitAPIException e) {
-		    System.out.println("Exception occurred while cloning repo");
-		    e.printStackTrace();
-		}
-		
-		/*$ git fetch origin pull/"pull request number"/head
-		$ git checkout -b pull-request  FETCH_HEAD
+			//TODO: repository, branch and credentials added by user
+		 	String command = "cmd.exe /c robocopy stableVersion PRVersion /MIR";
+	        
+	        Process proc = Runtime.getRuntime().exec(command);
+
+	        System.out.println("Copying files:");
+
+	        // Read the output
+	        BufferedReader reader =  
+	              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+	        String line = "";
+	        while((line = reader.readLine()) != null) {
+	            System.out.println(line);
+	        }
+	        
+	        proc.waitFor();
+
+	        command = "cmd.exe /c cd PRVersion && git fetch origin pull/96/head && git checkout -b pull-request  FETCH_HEAD";
+	        
+	        proc = Runtime.getRuntime().exec(command);
+
+	        // Read the output
+
+	        reader =  new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+	        line = "";
+	        while((line = reader.readLine()) != null) {
+	            System.out.print(line + "\n");
+	        }
+
+	        proc.waitFor();
+
+		/* git fetch origin pull/"pull request number"/head
+		git checkout -b pull-request  FETCH_HEAD
 		are the necessary commands to also download changes introduced by pull request
 		*/
 	}
 	
 	public void runPRVersionTests() throws Exception{
-		//TODO: similar to runStableVersionTests
+        String command = "cmd.exe /c cd PRVersion && mvn test";
+        
+        Process proc = Runtime.getRuntime().exec(command);
+
+        // Read the output
+
+        BufferedReader reader =  
+              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+        String line = "";
+        while((line = reader.readLine()) != null) {
+            System.out.print(line + "\n");
+        }
+
+        proc.waitFor();
 	}
 	
 	public void printPubRepositoryPRs() throws Exception {
