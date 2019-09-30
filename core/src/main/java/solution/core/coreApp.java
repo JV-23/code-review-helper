@@ -14,7 +14,7 @@ public class coreApp
         try {
         	gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
-        	//gitService.downloadPRVersion();
+        	gitService.downloadPRVersion();
         	//gitService.runPRVersionTests();
         	//gitService.printPubRepositoryPRs();
 		} catch (Exception e) {

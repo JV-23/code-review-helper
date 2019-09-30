@@ -128,21 +128,24 @@ public class serviceApp
 	        
 	        proc.waitFor();
 
-	        command = "cmd.exe /c cd PRVersion && git fetch origin pull/96/head && git checkout -b pull-request  FETCH_HEAD";
+	        ProcessBuilder processBuilder = new ProcessBuilder();
+	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/1/head && git checkout -b pull-request  FETCH_HEAD");
 	        
-	        proc = Runtime.getRuntime().exec(command);
+	        try {
+	        	Process process = processBuilder.start();
+	        	reader =  new BufferedReader(new InputStreamReader(process.getErrorStream()));
+	        	line = "";
+		        while((line = reader.readLine()) != null) {
+		            System.out.println(line);
+		        }
+		        
+		        process.waitFor();
 
-	        // Read the output
-
-	        reader =  new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-	        line = "";
-	        while((line = reader.readLine()) != null) {
-	            System.out.print(line + "\n");
 	        }
-
-	        proc.waitFor();
-
+	        catch(Exception e) {
+	        	e.printStackTrace();
+	        }
+	        
 		/* git fetch origin pull/"pull request number"/head
 		git checkout -b pull-request  FETCH_HEAD
 		are the necessary commands to also download changes introduced by pull request
@@ -208,7 +211,7 @@ public class serviceApp
 		serviceApp api = new serviceApp();
 		
 		GitHubClient client = new GitHubClient();
-		client.setOAuth2Token("ce086813cc6bed5e29875a94297d840eaa4d7828");
+		client.setOAuth2Token("ce086813cc6bed5e29875a94297d840eaa4d7828"); //token no longer exists, find alternative if needed
 		RepositoryService service = new RepositoryService(client);
 		CommitService commits = new CommitService(client);
 		PullRequestService prs = new PullRequestService(client);
