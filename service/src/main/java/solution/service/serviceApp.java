@@ -1,12 +1,14 @@
 package solution.service;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.PullRequest;
@@ -42,19 +44,38 @@ public class serviceApp
 		repService = new RepositoryService(client);
 		commitService = new CommitService(client);
 		prs = new PullRequestService(client);
-		
 	}
 	
+	
 	public void downloadStableVersion() throws Exception{
-		//TODO: repository and credentials added by user
-		String repoUrl = "https://github.com/openaudible/openaudible";
-		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider( "ce086813cc6bed5e29875a94297d840eaa4d7828", "" );
-		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
-		
-		System.out.println(cloneDirectoryPath);
-		
+		Console cnsl = null;
+		String username = null;
+		char[] pwd = null;
+		String repoUrl = null;
+	      
 		try {
-		    System.out.println("Cloning "+repoUrl+" into "+repoUrl);
+			// creates a console object
+			cnsl = System.console();
+			
+			if (cnsl != null) {
+			   // read line from the user input
+				username = cnsl.readLine("Insert your GitHub Username: ");
+				// read password into the char array
+				pwd = cnsl.readPassword("Insert your GitHub Password: ");
+				//read the url of the repository
+				repoUrl = cnsl.readLine("Insert the url of the repository you want to access:");
+			} 
+			     
+		} 
+		catch(Exception ex) {
+			ex.printStackTrace();      
+		}
+		
+		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(username, pwd);
+		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
+				
+		try {
+		    System.out.println("Cloning "+ repoUrl +" into stableVersion");
 		    Git.cloneRepository()
 	        	.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)))
 		        .setURI(repoUrl)
@@ -63,10 +84,11 @@ public class serviceApp
 		        .call();
 		    System.out.println("Completed Cloning");
 		} catch (GitAPIException e) {
-		    System.out.println("Exception occurred while cloning repo");
-		    e.printStackTrace();
+		    System.out.println("Exception occurred while cloning repo (probably a wrong password, or you"
+		    		+ " don't have the necessary permissions to acess the repo)");
 		}
 	}
+	
 	
 	public void runStableVersionTests() throws Exception{
         String command = "cmd.exe /c cd stableVersion && mvn test";
@@ -85,6 +107,7 @@ public class serviceApp
 
         proc.waitFor();
 	}
+	
 	
 	public void downloadPRVersion() throws Exception{
 			//TODO: repository, branch and credentials added by user
@@ -125,6 +148,7 @@ public class serviceApp
 		are the necessary commands to also download changes introduced by pull request
 		*/
 	}
+	
 	
 	public void runPRVersionTests() throws Exception{
         String command = "cmd.exe /c cd PRVersion && mvn test";
@@ -169,8 +193,17 @@ public class serviceApp
 		}
 	}
 	
-    public static void main( String[] args )
-    {
+	
+	public void printUserRepositories(GitHubClient client, RepositoryService repService, CommitService commitService) throws Exception{
+		
+		for (Repository repo : repService.getRepositories()) {
+			System.out.println("repo name: " + repo.getName() + "  -----  " + repo.getDescription());
+		}
+		
+	}
+	
+	
+    public static void main( String[] args ){
     	/*criar autenticaçao de utilizador*/
 		serviceApp api = new serviceApp();
 		

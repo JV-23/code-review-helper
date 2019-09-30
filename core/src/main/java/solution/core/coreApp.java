@@ -13,9 +13,9 @@ public class coreApp
     	serviceApp gitService = new serviceApp();
         try {
         	gitService.downloadStableVersion();
-			gitService.runStableVersionTests();
-        	gitService.downloadPRVersion();
-        	gitService.runPRVersionTests();
+			//gitService.runStableVersionTests();
+        	//gitService.downloadPRVersion();
+        	//gitService.runPRVersionTests();
         	//gitService.printPubRepositoryPRs();
 		} catch (Exception e) {
 			e.printStackTrace();
