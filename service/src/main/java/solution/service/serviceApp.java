@@ -1,9 +1,12 @@
 package solution.service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -110,7 +114,7 @@ public class serviceApp
 	
 	
 	public void downloadPRVersion() throws Exception{
-			//TODO: repository, branch and credentials added by user
+			//TODO: branch added by user
 		 	String command = "cmd.exe /c robocopy stableVersion PRVersion /MIR";
 	        
 	        Process proc = Runtime.getRuntime().exec(command);
@@ -118,8 +122,7 @@ public class serviceApp
 	        System.out.println("Copying files:");
 
 	        // Read the output
-	        BufferedReader reader =  
-	              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+	        BufferedReader reader =  new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
 	        String line = "";
 	        while((line = reader.readLine()) != null) {
@@ -127,13 +130,14 @@ public class serviceApp
 	        }
 	        
 	        proc.waitFor();
-
+	  
 	        ProcessBuilder processBuilder = new ProcessBuilder();
-	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/1/head && git checkout -b pull-request  FETCH_HEAD");
+	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/1/head && git checkout -b pull-request FETCH_HEAD");
 	        
 	        try {
+	        	processBuilder.redirectErrorStream(true);
 	        	Process process = processBuilder.start();
-	        	reader =  new BufferedReader(new InputStreamReader(process.getErrorStream()));
+	        	reader =  new BufferedReader(new InputStreamReader(process.getInputStream()));
 	        	line = "";
 		        while((line = reader.readLine()) != null) {
 		            System.out.println(line);
@@ -145,11 +149,6 @@ public class serviceApp
 	        catch(Exception e) {
 	        	e.printStackTrace();
 	        }
-	        
-		/* git fetch origin pull/"pull request number"/head
-		git checkout -b pull-request  FETCH_HEAD
-		are the necessary commands to also download changes introduced by pull request
-		*/
 	}
 	
 	
