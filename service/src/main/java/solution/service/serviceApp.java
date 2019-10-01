@@ -130,9 +130,14 @@ public class serviceApp
 	        }
 	        
 	        proc.waitFor();
+	        
+	        Scanner scan = new Scanner(System.in);
+	        System.out.println("Enter the number of the pull request you want to analyze:");
+	        
+	        String myNumber = scan.nextLine();
 	  
 	        ProcessBuilder processBuilder = new ProcessBuilder();
-	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/1/head && git checkout -b pull-request FETCH_HEAD");
+	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/" + myNumber + "/head && git checkout -b pull-request FETCH_HEAD");
 	        
 	        try {
 	        	processBuilder.redirectErrorStream(true);
