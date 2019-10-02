@@ -79,21 +79,25 @@ public class serviceApp
 	
 	
 	public void runStableVersionTests() throws Exception{
-        String command = "cmd.exe /c cd stableVersion && mvn test";
+        //String command = "cmd.exe /c cd stableVersion && mvn test";
         
-        Process proc = Runtime.getRuntime().exec(command);
+        ProcessBuilder proc = new ProcessBuilder();
+        proc.command("cmd.exe", "/c", "cd stableVersion && mvn test");
+        proc.redirectErrorStream(true);
+        Process process = proc.start();
+        //Runtime.getRuntime().exec(command);
 
         // Read the output
 
         BufferedReader reader =  
-              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+              new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         String line = "";
         while((line = reader.readLine()) != null) {
             System.out.print(line + "\n");
         }
 
-        proc.waitFor();
+        process.waitFor();
 	}
 	
 	
@@ -142,21 +146,26 @@ public class serviceApp
 	
 	
 	public void runPRVersionTests() throws Exception{
-        String command = "cmd.exe /c cd PRVersion && mvn test";
+        //String command = "cmd.exe /c cd PRVersion && mvn test";
         
-        Process proc = Runtime.getRuntime().exec(command);
+        //Process proc = Runtime.getRuntime().exec(command);
+        ProcessBuilder proc = new ProcessBuilder();
+        proc.command("cmd.exe", "/c", "cd PRVersion && mvn test");
+        proc.redirectErrorStream(true);
+        
+        Process process = proc.start();
 
         // Read the output
 
         BufferedReader reader =  
-              new BufferedReader(new InputStreamReader(proc.getInputStream()));
+              new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         String line = "";
         while((line = reader.readLine()) != null) {
             System.out.print(line + "\n");
         }
 
-        proc.waitFor();
+        process.waitFor();
 	}
 	
     public static void main( String[] args ){
