@@ -50,8 +50,8 @@ public class coreApp
 						Node node = nodeList.item(i);
 						
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
-				               Element element = (Element) node;
-				               stableTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
+							Element element = (Element) node;
+							stableTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
 
 						}
 					}
@@ -88,8 +88,8 @@ public class coreApp
 						Node node = nodeList.item(i);
 						
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
-				               Element element = (Element) node;
-				               pullRequestTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
+								Element element = (Element) node;
+								pullRequestTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
 
 						}
 					}
@@ -136,17 +136,17 @@ public class coreApp
     	coreApp coreService = new coreApp();
     	
         try {
-        	//gitService.downloadStableVersion();
+			//gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
-        	//gitService.downloadPRVersion();
-        	//gitService.runPRVersionTests();
-        	coreService.stableVersionTestPerformance();
-        	coreService.pullRequestVersionTestPerformance();
-        	coreService.compareTestTimes();
-        	System.out.println(coreService.getStableVersionTestTimes());
-        	System.out.println(coreService.getPullRequestTestTimes());
-        	System.out.println(coreService.getTestDifferences());
-        	
+			//gitService.downloadPRVersion();
+			//gitService.runPRVersionTests();
+			coreService.stableVersionTestPerformance();
+			coreService.pullRequestVersionTestPerformance();
+			coreService.compareTestTimes();
+			System.out.println(coreService.getStableVersionTestTimes());
+			System.out.println(coreService.getPullRequestTestTimes());
+			System.out.println(coreService.getTestDifferences());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
