@@ -95,7 +95,7 @@ public class serviceApp
         //String command = "cmd.exe /c cd stableVersion && mvn test";
         
         ProcessBuilder proc = new ProcessBuilder();
-        proc.command("cmd.exe", "/c", "cd stableVersion && mvn test");
+        proc.command("cmd.exe", "/c", "cd stableVersion && mvn test -fae");
         proc.redirectErrorStream(true);
         Process process = proc.start();
         //Runtime.getRuntime().exec(command);
@@ -163,7 +163,7 @@ public class serviceApp
         
         //Process proc = Runtime.getRuntime().exec(command);
         ProcessBuilder proc = new ProcessBuilder();
-        proc.command("cmd.exe", "/c", "cd PRVersion && mvn test");
+        proc.command("cmd.exe", "/c", "cd PRVersion && mvn test -fae");
         proc.redirectErrorStream(true);
         
         Process process = proc.start();
