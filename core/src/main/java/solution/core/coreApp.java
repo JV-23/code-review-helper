@@ -8,7 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,80 +33,97 @@ public class coreApp
 	final Map<String, String> stableTestTimes = new HashMap<String, String>();
 	final Map<String, String> pullRequestTestTimes = new HashMap<String, String>();
 	final Map<String, String> testDifferences = new HashMap<String, String>();
-
-	public void stableVersionTestPerformance() throws Exception {
-		Path startPath = Paths.get(System.getProperty("user.dir") + "\\stableVersion\\target\\surefire-reports");
+	static List<File> stableVersionFolders = new ArrayList<File>();
+	static List<File> PRVersionFolders = new ArrayList<File>();
+	
+	public void stableVersionTestPerformance(List<File> directories) throws Exception {
+		//get all the stable version folders
+		Utilities util = new Utilities();
+		stableVersionFolders = util.getSubFolders(System.getProperty("user.dir") + "\\stableVersion");
 		
-		Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
-		@Override
-		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
-			try {
-				if(file.getFileName().toString().endsWith(".xml")) {
-					File xmlFile = new File(file.toString());
-					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					Document doc = dBuilder.parse(xmlFile);
-					doc.normalize();
-					NodeList nodeList = doc.getElementsByTagName("testcase");
-					
-					for(int i = 0; i < nodeList.getLength(); i++) {
-						Node node = nodeList.item(i);
+		//visit them and find test results
+		for(File f : stableVersionFolders) {
+			Path startPath = Paths.get(f.getAbsolutePath());
+			
+			Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
+				try {
+					if(file.getFileName().toString().endsWith(".xml")) {
+						File xmlFile = new File(file.toString());
+						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+						Document doc = dBuilder.parse(xmlFile);
+						doc.normalize();
+						NodeList nodeList = doc.getElementsByTagName("testcase");
 						
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element element = (Element) node;
-							stableTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
+						for(int i = 0; i < nodeList.getLength(); i++) {
+							Node node = nodeList.item(i);
+							
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Element element = (Element) node;
+								stableTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
 
+							}
 						}
 					}
+					return FileVisitResult.CONTINUE;
 				}
-				return FileVisitResult.CONTINUE;
+				catch(Exception e){
+					e.printStackTrace();
+					return FileVisitResult.CONTINUE;
+				}
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				return FileVisitResult.CONTINUE;
-			}
+				
+			});
+		
 		}
-			
-		});
-	
 	}
 	
 	
 	public void pullRequestVersionTestPerformance() throws Exception {
-		Path startPath = Paths.get(System.getProperty("user.dir") + "\\PRVersion\\target\\surefire-reports");
+		//get all the pull request version folders
+		Utilities util = new Utilities();
+		PRVersionFolders = util.getSubFolders(System.getProperty("user.dir") + "\\PRVersion");
 		
-		Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
-		@Override
-		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
-			try {
-				if(file.getFileName().toString().endsWith(".xml")) {
-					File xmlFile = new File(file.toString());
-					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					Document doc = dBuilder.parse(xmlFile);
-					doc.normalize();
-					NodeList nodeList = doc.getElementsByTagName("testcase");
-					
-					for(int i = 0; i < nodeList.getLength(); i++) {
-						Node node = nodeList.item(i);
+		//visit them and find test results
+		for(File f : PRVersionFolders) {
+			Path startPath = Paths.get(f.getAbsolutePath());
+			
+			Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
+				try {
+					if(file.getFileName().toString().endsWith(".xml")) {
+						File xmlFile = new File(file.toString());
+						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+						Document doc = dBuilder.parse(xmlFile);
+						doc.normalize();
+						NodeList nodeList = doc.getElementsByTagName("testcase");
 						
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
+						for(int i = 0; i < nodeList.getLength(); i++) {
+							Node node = nodeList.item(i);
+							
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
 								Element element = (Element) node;
 								pullRequestTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
 
+							}
 						}
 					}
+					return FileVisitResult.CONTINUE;
 				}
-				return FileVisitResult.CONTINUE;
+				catch(Exception e){
+					e.printStackTrace();
+					return FileVisitResult.CONTINUE;
+				}
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				return FileVisitResult.CONTINUE;
-			}
+				
+			});
+		
 		}
-			
-		});
-		}
+	}
 	
 	
 	public void compareTestTimes() {
@@ -116,12 +136,14 @@ public class coreApp
 		}
 	}
 	
-	
+	public List<File> getStableVersionFolders(){
+		return stableVersionFolders;
+	}
+
 	public Map<String, String> getStableVersionTestTimes() {
 		return stableTestTimes;
 	}
 	
-
 	public Map<String, String> getPullRequestTestTimes() {
 		return pullRequestTestTimes;
 	}
@@ -134,17 +156,18 @@ public class coreApp
     {
     	serviceApp gitService = new serviceApp();
     	coreApp coreService = new coreApp();
+    	Utilities util = new Utilities();
     	
         try {
 			//gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
 			//gitService.downloadPRVersion();
-			//gitService.runPRVersionTests();
-			coreService.stableVersionTestPerformance();
+        	//gitService.runPRVersionTests();
+        	coreService.stableVersionTestPerformance(stableVersionFolders);
 			coreService.pullRequestVersionTestPerformance();
 			coreService.compareTestTimes();
-			System.out.println(coreService.getStableVersionTestTimes());
-			System.out.println(coreService.getPullRequestTestTimes());
+			//System.out.println(coreService.getStableVersionTestTimes());
+			//System.out.println(coreService.getPullRequestTestTimes());
 			System.out.println(coreService.getTestDifferences());
 
 		} catch (Exception e) {
