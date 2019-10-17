@@ -30,99 +30,27 @@ import solution.service.*;
  */
 public class coreApp 
 {
-	final Map<String, String> stableTestTimes = new HashMap<String, String>();
-	final Map<String, String> pullRequestTestTimes = new HashMap<String, String>();
-	final Map<String, String> testDifferences = new HashMap<String, String>();
+	Map<String, String> stableTestTimes = new HashMap<String, String>();
+	Map<String, String> pullRequestTestTimes = new HashMap<String, String>();
+	Map<String, String> testDifferences = new HashMap<String, String>();
 	static List<File> stableVersionFolders = new ArrayList<File>();
 	static List<File> PRVersionFolders = new ArrayList<File>();
 	
-	public void stableVersionTestPerformance(List<File> directories) throws Exception {
+	public void stableVersionTestPerformance() throws Exception {
 		//get all the stable version folders
 		Utilities util = new Utilities();
 		stableVersionFolders = util.getSubFolders(System.getProperty("user.dir") + "\\stableVersion");
 		
-		//visit them and find test results
-		for(File f : stableVersionFolders) {
-			Path startPath = Paths.get(f.getAbsolutePath());
-			
-			Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
-				try {
-					if(file.getFileName().toString().endsWith(".xml")) {
-						File xmlFile = new File(file.toString());
-						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						Document doc = dBuilder.parse(xmlFile);
-						doc.normalize();
-						NodeList nodeList = doc.getElementsByTagName("testcase");
-						
-						for(int i = 0; i < nodeList.getLength(); i++) {
-							Node node = nodeList.item(i);
-							
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element element = (Element) node;
-								stableTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
-
-							}
-						}
-					}
-					return FileVisitResult.CONTINUE;
-				}
-				catch(Exception e){
-					e.printStackTrace();
-					return FileVisitResult.CONTINUE;
-				}
-			}
-				
-			});
-		
-		}
+		stableTestTimes = util.testPerformance(stableVersionFolders);
 	}
 	
-	
+
 	public void pullRequestVersionTestPerformance() throws Exception {
 		//get all the pull request version folders
 		Utilities util = new Utilities();
 		PRVersionFolders = util.getSubFolders(System.getProperty("user.dir") + "\\PRVersion");
 		
-		//visit them and find test results
-		for(File f : PRVersionFolders) {
-			Path startPath = Paths.get(f.getAbsolutePath());
-			
-			Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
-				try {
-					if(file.getFileName().toString().endsWith(".xml")) {
-						File xmlFile = new File(file.toString());
-						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						Document doc = dBuilder.parse(xmlFile);
-						doc.normalize();
-						NodeList nodeList = doc.getElementsByTagName("testcase");
-						
-						for(int i = 0; i < nodeList.getLength(); i++) {
-							Node node = nodeList.item(i);
-							
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element element = (Element) node;
-								pullRequestTestTimes.put(element.getAttribute("name"), element.getAttribute("time"));
-
-							}
-						}
-					}
-					return FileVisitResult.CONTINUE;
-				}
-				catch(Exception e){
-					e.printStackTrace();
-					return FileVisitResult.CONTINUE;
-				}
-			}
-				
-			});
-		
-		}
+		pullRequestTestTimes = util.testPerformance(PRVersionFolders);
 	}
 	
 	
@@ -132,6 +60,18 @@ public class coreApp
 				String s = pullRequestTestTimes.get(stableEntry.getKey());
 				Double i = Double.parseDouble(s) - Double.parseDouble(stableEntry.getValue());
 				testDifferences.put(stableEntry.getKey(), String.valueOf(i));
+			}
+			else {
+				System.out.println(stableEntry);
+			}
+		}
+		System.out.println("-----------");
+		for(Map.Entry<String, String> pullRequestEntry:pullRequestTestTimes.entrySet()){
+			if(stableTestTimes.containsKey(pullRequestEntry.getKey())){
+				;
+			}
+			else {
+				System.out.println(pullRequestEntry);
 			}
 		}
 	}
@@ -163,7 +103,7 @@ public class coreApp
 			//gitService.runStableVersionTests();
 			//gitService.downloadPRVersion();
         	//gitService.runPRVersionTests();
-        	coreService.stableVersionTestPerformance(stableVersionFolders);
+        	coreService.stableVersionTestPerformance();
 			coreService.pullRequestVersionTestPerformance();
 			coreService.compareTestTimes();
 			//System.out.println(coreService.getStableVersionTestTimes());
