@@ -99,6 +99,10 @@ public class coreApp
     	Utilities util = new Utilities();
     	
         try {
+        	//TODO: compare overall coverage between versions
+        	//TODO: compare coverage on a class by class basis
+        	//TODO: check coverage of changed/added lines specifically
+        	//TODO: identify tests that test the lines that were altered (how?)
 			//gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
 			//gitService.downloadPRVersion();
