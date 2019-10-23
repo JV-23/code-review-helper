@@ -1,7 +1,9 @@
 package solution.core;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -97,6 +99,7 @@ public class coreApp
     	serviceApp gitService = new serviceApp();
     	coreApp coreService = new coreApp();
     	Utilities util = new Utilities();
+    	coverageAnalysis coverage = new coverageAnalysis();
     	
         try {
         	//TODO: compare overall coverage between versions
@@ -107,13 +110,13 @@ public class coreApp
 			//gitService.runStableVersionTests();
 			//gitService.downloadPRVersion();
         	//gitService.runPRVersionTests();
-        	coreService.stableVersionTestPerformance();
-			coreService.pullRequestVersionTestPerformance();
-			coreService.compareTestTimes();
+        	//coreService.stableVersionTestPerformance();
+			//coreService.pullRequestVersionTestPerformance();
+			//coreService.compareTestTimes();
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
-			System.out.println(coreService.getTestDifferences());
-
+			//System.out.println(coreService.getTestDifferences());
+        	coverage.generateReports();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

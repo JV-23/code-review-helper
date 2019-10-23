@@ -98,7 +98,6 @@ public class serviceApp
         proc.command("cmd.exe", "/c", "cd stableVersion && mvn test -fae");
         proc.redirectErrorStream(true);
         Process process = proc.start();
-        //Runtime.getRuntime().exec(command);
 
         // Read the output
 
@@ -115,7 +114,6 @@ public class serviceApp
 	
 	
 	public void downloadPRVersion() throws Exception{
-			//TODO: branch added by user
 		 	String command = "cmd.exe /c robocopy stableVersion PRVersion /MIR";
 	        
 	        Process proc = Runtime.getRuntime().exec(command);
