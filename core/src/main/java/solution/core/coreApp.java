@@ -67,15 +67,6 @@ public class coreApp
 				System.out.println(stableEntry);
 			}
 		}
-		System.out.println("-----------");
-		for(Map.Entry<String, String> pullRequestEntry:pullRequestTestTimes.entrySet()){
-			if(stableTestTimes.containsKey(pullRequestEntry.getKey())){
-				;
-			}
-			else {
-				System.out.println(pullRequestEntry);
-			}
-		}
 	}
 	
 	public List<File> getStableVersionFolders(){
@@ -116,8 +107,9 @@ public class coreApp
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
-        	coverage.generateReports();
-		} catch (Exception e) {
+        	//coverage.generateReports();
+        	coverage.parseReports();
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
     }
