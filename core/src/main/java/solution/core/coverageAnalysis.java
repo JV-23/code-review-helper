@@ -2,6 +2,7 @@ package solution.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.FileVisitResult;
@@ -18,12 +19,15 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class coverageAnalysis {
+	
 	public void generateReports() throws Exception{
 		ProcessBuilder proc = new ProcessBuilder();
         proc.command("cmd.exe", "/c", "cd stableVersion && mvn jacoco:report");
@@ -60,70 +64,70 @@ public class coverageAnalysis {
         process.waitFor();
 	}
 	
-	public void parseReports() throws Exception {
-		Utilities util = new Utilities();
-		List<File> folders = new ArrayList<File>();
-		folders = util.getSubFolders(System.getProperty("user.dir") + "\\stableVersion");
-		
-		for(File f : folders) {
-			Path startPath = Paths.get(f.getAbsolutePath());
-			
-			Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() { 
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException{
-				try {
-					//System.out.println(file.getParent().toString() + file.getFileName().toString());
-					if(file.getFileName().toString().endsWith("jacoco.xml")) {
-						System.out.println(file.getParent().toString() + file.getFileName().toString());
-						File xmlFile = new File(file.toString());
-						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						Document doc = dBuilder.parse(xmlFile);
-						doc.normalize();
-						
-						int aux = 0;
-						
-						NodeList nodeList = doc.getElementsByTagName("class");
-						int missed = 0;
-						int covered = 0;
-						for(int i = 0; i < nodeList.getLength(); i++) {
-							Node node = nodeList.item(i);
-														
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element element = (Element) node;
-								//if(element.getAttribute("name").equals("io/github/bonigarcia/wdm/Shell")){
-									NodeList nL2 = node.getChildNodes();
-									for(int j = 0; j < nL2.getLength(); j++) {
-										Node node2 = nL2.item(j);
-										NodeList nL3 = node2.getChildNodes();
-										element = (Element) node2;
-										//System.out.println(element.getAttribute("name").toString());
-										for(int k = 0 ; k < nL3.getLength(); k++) {
-											Node node3 = nL3.item(k);
-											element = (Element) node3;
-											if(element.getAttribute("type").equals("INSTRUCTION")){
-												missed += Integer.parseInt(element.getAttribute("missed"));
-												covered += Integer.parseInt(element.getAttribute("covered"));
-											}
-										}
+	public coverageResults parseReports(final File folder, coverageResults results) throws Exception {
+		Document doc;
+		for (final File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				parseReports(fileEntry, results);
+			} 
+			else {
+				if(fileEntry.getName().endsWith("jacoco.xml")) {
+					File xmlFile = new File(fileEntry.toString());
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					try{
+						doc = dBuilder.parse(xmlFile);
+					}
+					catch(FileNotFoundException e) {
+						File source = new File(System.getProperty("user.dir") + "\\report.dtd");
+						File dest = new File(fileEntry.getParent() + "\\report.dtd");
+					    FileUtils.copyFile(source, dest);
+					    doc = dBuilder.parse(xmlFile);
+					}
+					doc.normalize();
+											
+					NodeList nodeList = doc.getElementsByTagName("class");
+
+					for(int i = 0; i < nodeList.getLength(); i++) {
+						Node node = nodeList.item(i);
+													
+						if (node.getNodeType() == Node.ELEMENT_NODE) {
+							Element element = (Element) node;
+							NodeList nL2 = node.getChildNodes();
+							for(int j = 0; j < nL2.getLength(); j++) {
+								Node node2 = nL2.item(j);
+								NodeList nL3 = node2.getChildNodes();
+								element = (Element) node2;
+								for(int k = 0 ; k < nL3.getLength(); k++) {
+									Node node3 = nL3.item(k);
+									element = (Element) node3;
+									if(element.getAttribute("type").equals("INSTRUCTION")){
+										results.setMissedInstructions(results.getMissedInstructions() + Integer.parseInt(element.getAttribute("missed")));
+										results.setCoveredInstructions(results.getCoveredInstructions() + Integer.parseInt(element.getAttribute("covered")));
 									}
-								//}
+									if(element.getAttribute("type").equals("BRANCH")){
+										results.setMissedBranches(results.getMissedBranches() + Integer.parseInt(element.getAttribute("missed")));
+										results.setCoveredBranches(results.getCoveredBranches() + Integer.parseInt(element.getAttribute("covered")));
+									}
+									if(element.getAttribute("type").equals("COMPLEXITY")){
+										results.setMissedComplexity(results.getMissedComplexity() + Integer.parseInt(element.getAttribute("missed")));
+										results.setCoveredComplexity(results.getCoveredComplexity() + Integer.parseInt(element.getAttribute("covered")));
+									}
+									if(element.getAttribute("type").equals("LINE")){
+										results.setMissedLines(results.getMissedLines() + Integer.parseInt(element.getAttribute("missed")));
+										results.setCoveredLines(results.getCoveredLines() + Integer.parseInt(element.getAttribute("covered")));
+									}
+									if(element.getAttribute("type").equals("METHOD")){
+										results.setMissedMethods(results.getMissedMethods() + Integer.parseInt(element.getAttribute("missed")));
+										results.setCoveredMethods(results.getCoveredMethods() + Integer.parseInt(element.getAttribute("covered")));
+									}
+								}
 							}
 						}
-						System.out.println("covered" + covered);
-						System.out.println("missed" + missed);
-						System.out.println("aux" + aux);
 					}
-					return FileVisitResult.CONTINUE;
-				}
-				catch(Exception e){
-					e.printStackTrace();
-					return FileVisitResult.CONTINUE;
 				}
 			}
-				
-			});
-		
 		}
+		return results;
 	}
 }
