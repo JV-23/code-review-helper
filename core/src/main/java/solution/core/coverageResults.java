@@ -92,5 +92,21 @@ public class coverageResults {
 	public void setCoveredMethods(int coveredMethods) {
 		this.coveredMethods = coveredMethods;
 	}
+	
+	@Override
+	public String toString() {
+		String result = new String();
+		result += "missed Instructions: " + this.getMissedInstructions() + "\n";
+		result += "covered Instructions: " + this.getCoveredInstructions() + "\n";
+		result += "missed Branches: " + this.getMissedBranches() + "\n";
+		result += "covered Branches: " + this.getCoveredBranches() + "\n";
+		result += "missed Complexity: " + this.getMissedComplexity() + "\n";
+		result += "covered Complexity: " + this.getCoveredComplexity() + "\n";
+		result += "missed Lines: " + this.getMissedLines() + "\n";
+		result += "covered Lines: " + this.getCoveredLines() + "\n";
+		result += "missed Methods: " + this.getMissedMethods() + "\n";
+		result += "covered Methods: " + this.getCoveredMethods() + "\n";
+		return result;
+	}
 
 }

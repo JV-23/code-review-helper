@@ -64,11 +64,12 @@ public class coverageAnalysis {
         process.waitFor();
 	}
 	
-	public coverageResults parseReports(final File folder, coverageResults results) throws Exception {
+	public Map<String, coverageResults> parseReports(final File folder, Map<String, coverageResults> coverage) throws Exception {
 		Document doc;
+		coverageResults results = new coverageResults();
 		for (final File fileEntry : folder.listFiles()) {
 			if (fileEntry.isDirectory()) {
-				parseReports(fileEntry, results);
+				parseReports(fileEntry, coverage);
 			} 
 			else {
 				if(fileEntry.getName().endsWith("jacoco.xml")) {
@@ -92,15 +93,15 @@ public class coverageAnalysis {
 						Node node = nodeList.item(i);
 													
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element element = (Element) node;
+							Element e = (Element) node;
 							NodeList nL2 = node.getChildNodes();
+							results = new coverageResults();
 							for(int j = 0; j < nL2.getLength(); j++) {
 								Node node2 = nL2.item(j);
 								NodeList nL3 = node2.getChildNodes();
-								element = (Element) node2;
 								for(int k = 0 ; k < nL3.getLength(); k++) {
 									Node node3 = nL3.item(k);
-									element = (Element) node3;
+									Element element = (Element) node3;
 									if(element.getAttribute("type").equals("INSTRUCTION")){
 										results.setMissedInstructions(results.getMissedInstructions() + Integer.parseInt(element.getAttribute("missed")));
 										results.setCoveredInstructions(results.getCoveredInstructions() + Integer.parseInt(element.getAttribute("covered")));
@@ -121,13 +122,15 @@ public class coverageAnalysis {
 										results.setMissedMethods(results.getMissedMethods() + Integer.parseInt(element.getAttribute("missed")));
 										results.setCoveredMethods(results.getCoveredMethods() + Integer.parseInt(element.getAttribute("covered")));
 									}
+									//System.out.println(e.getAttribute("name"));
 								}
+								coverage.put(e.getAttribute("name"), results);
 							}
 						}
 					}
 				}
 			}
 		}
-		return results;
+		return coverage;
 	}
 }

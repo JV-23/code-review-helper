@@ -37,8 +37,8 @@ public class coreApp
 	Map<String, String> testDifferences = new HashMap<String, String>();
 	static List<File> stableVersionFolders = new ArrayList<File>();
 	static List<File> PRVersionFolders = new ArrayList<File>();
-	static coverageResults stableCoverage;
-	static coverageResults pullRequestCoverage;
+	static Map<String, coverageResults> stableCoverage;
+	static Map<String, coverageResults> pullRequestCoverage;
 	
 	public void stableVersionTestPerformance() throws Exception {
 		//get all the stable version folders
@@ -95,8 +95,6 @@ public class coreApp
     	coverageAnalysis coverage = new coverageAnalysis();
     	
         try {
-        	//TODO: compare overall coverage between versions
-        	//TODO: compare coverage on a class by class basis
         	//TODO: check coverage of changed/added lines specifically
         	//TODO: identify tests that test the lines that were altered (how?)
 			//gitService.downloadStableVersion();
@@ -111,29 +109,11 @@ public class coreApp
 			//System.out.println(coreService.getTestDifferences());
         	//coverage.generateReports();
         	//coverage.parseReports();
-        	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new coverageResults());
-    		System.out.println("missed Instructions: " + stableCoverage.getMissedInstructions());
-    		System.out.println("covered Instructions: " + stableCoverage.getCoveredInstructions());
-    		System.out.println("missed Branches: " + stableCoverage.getMissedBranches());
-    		System.out.println("covered Branches: " + stableCoverage.getCoveredBranches());
-    		System.out.println("missed Complexity: " + stableCoverage.getMissedComplexity());
-    		System.out.println("covered Complexity: " + stableCoverage.getCoveredComplexity());
-    		System.out.println("missed Lines: " + stableCoverage.getMissedLines());
-    		System.out.println("covered Lines: " + stableCoverage.getCoveredLines());
-    		System.out.println("missed Methods: " + stableCoverage.getMissedMethods());
-    		System.out.println("covered Methods: " + stableCoverage.getCoveredMethods());
-        	pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new coverageResults());
-    		System.out.println("missed Instructions: " + pullRequestCoverage.getMissedInstructions());
-    		System.out.println("covered Instructions: " + pullRequestCoverage.getCoveredInstructions());
-    		System.out.println("missed Branches: " + pullRequestCoverage.getMissedBranches());
-    		System.out.println("covered Branches: " + pullRequestCoverage.getCoveredBranches());
-    		System.out.println("missed Complexity: " + pullRequestCoverage.getMissedComplexity());
-    		System.out.println("covered Complexity: " + pullRequestCoverage.getCoveredComplexity());
-    		System.out.println("missed Lines: " + pullRequestCoverage.getMissedLines());
-    		System.out.println("covered Lines: " + pullRequestCoverage.getCoveredLines());
-    		System.out.println("missed Methods: " + pullRequestCoverage.getMissedMethods());
-    		System.out.println("covered Methods: " + pullRequestCoverage.getCoveredMethods());
-        } catch (Exception e) {
+        	//stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
+    		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+    		//System.out.println(pullRequestCoverage);
+    	} 
+        catch (Exception e) {
 			e.printStackTrace();
 		}
     }
