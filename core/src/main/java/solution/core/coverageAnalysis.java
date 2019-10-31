@@ -26,6 +26,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import solution.service.serviceApp;
+
 public class coverageAnalysis {
 	
 	public void generateReports() throws Exception{
@@ -132,5 +134,16 @@ public class coverageAnalysis {
 			}
 		}
 		return coverage;
+	}
+	
+	
+	public void checkIfChangesAreCovered(String repo, int pullRequestNumber) {
+		serviceApp gitService = new serviceApp();
+		try {
+			gitService.getPullRequestChanges(repo, pullRequestNumber);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

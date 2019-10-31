@@ -48,7 +48,16 @@ import org.w3c.dom.NodeList;
  */
 public class serviceApp 
 {
-	public void downloadStableVersion() throws Exception{
+	private GitHubClient client = new GitHubClient();
+	private RepositoryService repService = new RepositoryService(client);
+	private CommitService commitService = new CommitService(client);
+	private PullRequestService prs = new PullRequestService(client);
+	
+	public serviceApp() {
+		client.setOAuth2Token("3d64bbf822b565f5cdce10c24ca090fef080bff1");
+	}
+	
+	public String downloadStableVersion() throws Exception{
 		Console cnsl = null;
 		String username = null;
 		char[] pwd = null;
@@ -88,6 +97,8 @@ public class serviceApp
 		    System.out.println("Exception occurred while cloning repo (probably a wrong password, or you"
 		    		+ " don't have the necessary permissions to acess the repo)");
 		}
+		
+		return repoUrl;
 	}
 	
 	
@@ -113,7 +124,7 @@ public class serviceApp
 	}
 	
 	
-	public void downloadPRVersion() throws Exception{
+	public int downloadPRVersion() throws Exception{
 		 	String command = "cmd.exe /c robocopy stableVersion PRVersion /MIR";
 	        
 	        Process proc = Runtime.getRuntime().exec(command);
@@ -153,6 +164,8 @@ public class serviceApp
 	        catch(Exception e) {
 	        	e.printStackTrace();
 	        }
+	        
+	        return Integer.parseInt(myNumber);
 	}
 	
 	
@@ -179,8 +192,78 @@ public class serviceApp
         process.waitFor();
 	}
 	
+	public void getPullRequestChanges(String repo, int pullRequestNumber) throws Exception {
+		String[] parts = repo.split("/");
+
+		Repository pubRepo = repService.getRepository(parts[3], parts[4]);
+		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
+		
+		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
+			//System.out.println(pr.getTitle());
+			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
+			prCommits = prs.getCommits(pubRepo, pr.getNumber());
+			if(pr.getNumber() == pullRequestNumber) {
+				for(RepositoryCommit rc : prCommits) {
+					RepositoryCommit anotherCommit = commitService.getCommit(pubRepo, rc.getSha());
+					for(CommitFile f : anotherCommit.getFiles()) {
+						//System.out.println(f.getFilename());
+						//System.out.println(f.getPatch());
+						//System.out.println("------------------------------------");
+						filterChangedFilePatchAdditions(f.getPatch());
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public Map<Integer, String> filterChangedFilePatchAdditions(String changedFilePatch) {
+		
+		String[] splitData = changedFilePatch.split("(?=\\n\\+)|(?=\\n\\-)|\n"); //splits the (patch) by "\n+" or "\n-" while keeping them. removes "\n"
+		Map<Integer, String> dataToProcess = new HashMap<Integer, String>();
+		int lineNr = 0;
+		String lineNumber ="";
+		boolean b = false;
+		
+		//this is to find which line the patch starts at
+		for (int i = 0, n = splitData[0].length(); i < n; i++) {
+		    char c = splitData[0].charAt(i);
+		    if(c == ',') {
+		    	b = false;
+		    }
+		    if(b == true) {
+		    	lineNumber += c;
+		    }
+		    if(c == '+') {
+		    	b = true;
+		    }
+		}
+		lineNr = Integer.parseInt(lineNumber);
+		lineNr -=  1;
+		
+		
+		for(String s : splitData) {
+			if(s.startsWith("\n+")) {
+				s = s.replace("\n+", ""); //removes the "+" sign of patch lines to compare with source file content
+				dataToProcess.put(lineNr, s);
+			}
+			if(!(s.startsWith("\n-"))) //only increments if line wasn't deleted
+					lineNr++;
+		}
+
+		//prints for testing purposes
+		for(Map.Entry<Integer, String> entry:dataToProcess.entrySet()) {
+			System.out.println(entry);
+		}
+		System.out.println("----------------");
+
+		return dataToProcess;
+	}
+
+	
     public static void main( String[] args ){
     	/*criar autenticaçao de utilizador*/
 		serviceApp api = new serviceApp();	
+		
     }
 }

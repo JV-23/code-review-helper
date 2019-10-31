@@ -32,6 +32,9 @@ import solution.service.*;
  */
 public class coreApp 
 {
+	static String repo;
+	static int pullRequestNumber;
+	
 	Map<String, String> stableTestTimes = new HashMap<String, String>();
 	Map<String, String> pullRequestTestTimes = new HashMap<String, String>();
 	Map<String, String> testDifferences = new HashMap<String, String>();
@@ -97,21 +100,26 @@ public class coreApp
         try {
         	//TODO: check coverage of changed/added lines specifically
         	//TODO: identify tests that test the lines that were altered (how?)
-			//gitService.downloadStableVersion();
+			//repo = gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
-			//gitService.downloadPRVersion();
+			//pullRequestNumber = gitService.downloadPRVersion();
         	//gitService.runPRVersionTests();
+        	
         	//coreService.stableVersionTestPerformance();
 			//coreService.pullRequestVersionTestPerformance();
 			//coreService.compareTestTimes();
+        	
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
+        	
         	//coverage.generateReports();
         	//coverage.parseReports();
         	//stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
-    		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+    		//pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
     		//System.out.println(pullRequestCoverage);
+        	
+        	coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 390);
     	} 
         catch (Exception e) {
 			e.printStackTrace();
