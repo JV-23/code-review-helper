@@ -140,7 +140,7 @@ public class coverageAnalysis {
 	public void checkIfChangesAreCovered(String repo, int pullRequestNumber) {
 		serviceApp gitService = new serviceApp();
 		try {
-			gitService.getPullRequestChanges(repo, pullRequestNumber);
+			System.out.println(gitService.getPullRequestChanges(repo, pullRequestNumber));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

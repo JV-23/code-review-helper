@@ -192,12 +192,13 @@ public class serviceApp
         process.waitFor();
 	}
 	
-	public void getPullRequestChanges(String repo, int pullRequestNumber) throws Exception {
+	
+	public List<changedLines> getPullRequestChanges(String repo, int pullRequestNumber) throws Exception {
 		String[] parts = repo.split("/");
-
+		List<changedLines> lines = new ArrayList<changedLines>();
 		Repository pubRepo = repService.getRepository(parts[3], parts[4]);
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
-		
+
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
@@ -209,15 +210,16 @@ public class serviceApp
 						//System.out.println(f.getFilename());
 						//System.out.println(f.getPatch());
 						//System.out.println("------------------------------------");
-						filterChangedFilePatchAdditions(f.getPatch());
+						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
 					}
 				}
 			}
 			
 		}
+		return lines;
 	}
 	
-	public Map<Integer, String> filterChangedFilePatchAdditions(String changedFilePatch) {
+	public changedLines filterChangedFilePatchAdditions(String changedFilePatch, String filename) {
 		
 		String[] splitData = changedFilePatch.split("(?=\\n\\+)|(?=\\n\\-)|\n"); //splits the (patch) by "\n+" or "\n-" while keeping them. removes "\n"
 		Map<Integer, String> dataToProcess = new HashMap<Integer, String>();
@@ -225,39 +227,40 @@ public class serviceApp
 		String lineNumber ="";
 		boolean b = false;
 		
-		//this is to find which line the patch starts at
-		for (int i = 0, n = splitData[0].length(); i < n; i++) {
-		    char c = splitData[0].charAt(i);
-		    if(c == ',') {
-		    	b = false;
-		    }
-		    if(b == true) {
-		    	lineNumber += c;
-		    }
-		    if(c == '+') {
-		    	b = true;
-		    }
-		}
-		lineNr = Integer.parseInt(lineNumber);
-		lineNr -=  1;
-		
-		
 		for(String s : splitData) {
 			if(s.startsWith("\n+")) {
 				s = s.replace("\n+", ""); //removes the "+" sign of patch lines to compare with source file content
 				dataToProcess.put(lineNr, s);
 			}
 			if(!(s.startsWith("\n-"))) //only increments if line wasn't deleted
-					lineNr++;
+				lineNr++;
+			if(s.startsWith("@@ -")) {
+				for (int i = 0, n = s.length(); i < n; i++) {
+				    char c = s.charAt(i);
+				    if(c == ',') {
+				    	b = false;
+				    }
+				    if(b == true) {
+				    	lineNumber += c;
+				    }
+				    if(c == '+') {
+				    	b = true;
+				    }
+				}
+				lineNr = Integer.parseInt(lineNumber);
+				lineNumber = "";
+			}
 		}
-
+			
 		//prints for testing purposes
+		/*System.out.println(filename);
 		for(Map.Entry<Integer, String> entry:dataToProcess.entrySet()) {
 			System.out.println(entry);
 		}
 		System.out.println("----------------");
-
-		return dataToProcess;
+		*/
+		changedLines change = new changedLines(filename, dataToProcess);
+		return change;
 	}
 
 	
