@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
@@ -26,6 +27,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import solution.service.changedLines;
 import solution.service.serviceApp;
 
 public class coverageAnalysis {
@@ -137,13 +139,82 @@ public class coverageAnalysis {
 	}
 	
 	
-	public void checkIfChangesAreCovered(String repo, int pullRequestNumber) {
+	public List<ChangedLine> checkIfChangesAreCovered(String repo, int pullRequestNumber) {
+		List<ChangedLine> result = new ArrayList<ChangedLine>();
 		serviceApp gitService = new serviceApp();
+		List<changedLines> lines = null;
 		try {
-			System.out.println(gitService.getPullRequestChanges(repo, pullRequestNumber));
+			lines = gitService.getPullRequestChanges(repo, pullRequestNumber);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println(lines);
+		try {
+			parseChanges(new File(System.getProperty("user.dir") + "\\PRVersion"), lines, result);
+		} catch(Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
 	}
+	
+	public List<ChangedLine> parseChanges(File folder, List<changedLines> lines, List<ChangedLine> result) throws Exception {
+		Document doc;
+		for (final File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				parseChanges(fileEntry, lines, result);
+			} 
+			else {
+				if(fileEntry.getName().endsWith("jacoco.xml")) {
+					File xmlFile = new File(fileEntry.toString());
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					try{
+						doc = dBuilder.parse(xmlFile);
+					}
+					catch(FileNotFoundException e) {
+						File source = new File(System.getProperty("user.dir") + "\\report.dtd");
+						File dest = new File(fileEntry.getParent() + "\\report.dtd");
+					    FileUtils.copyFile(source, dest);
+					    doc = dBuilder.parse(xmlFile);
+					}
+					doc.normalize();
+					
+					for(changedLines changed : lines) {
+						String file = changed.getFilename();
+						String[] s = file.split("/");
+						file = s[s.length-1];
+
+						NodeList nodeList = doc.getElementsByTagName("sourcefile");
+						for(int i = 0; i < nodeList.getLength(); i++) {
+							Node node = nodeList.item(i);
+							Element element = (Element) node;
+							if(element.getAttribute("name").equals(file)) {
+								for(Map.Entry<Integer, String> entry : changed.getChanges().entrySet()) {
+									NodeList nodeList2 = node.getChildNodes();
+									for(int j = 0; j < nodeList2.getLength(); j++) {
+										Node node2 = nodeList2.item(j);
+										Element element2 = (Element) node2;
+										if(element2.getAttribute("nr").equals(entry.getKey().toString())) {
+											ChangedLine changed2 = new ChangedLine();
+											changed2.setLineNumber(Integer.parseInt(element2.getAttribute("nr")));
+											changed2.setCoveredInstructions(Integer.parseInt(element2.getAttribute("ci")));
+											changed2.setMissedInstructions(Integer.parseInt(element2.getAttribute("mi")));
+											changed2.setCoveredBranches(Integer.parseInt(element2.getAttribute("cb")));
+											changed2.setMissedBranches(Integer.parseInt(element2.getAttribute("mb")));
+											changed2.setFilename(file);
+											result.add(changed2);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 }

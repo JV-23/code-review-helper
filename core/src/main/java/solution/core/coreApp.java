@@ -40,8 +40,11 @@ public class coreApp
 	Map<String, String> testDifferences = new HashMap<String, String>();
 	static List<File> stableVersionFolders = new ArrayList<File>();
 	static List<File> PRVersionFolders = new ArrayList<File>();
+	
 	static Map<String, coverageResults> stableCoverage;
 	static Map<String, coverageResults> pullRequestCoverage;
+	
+	static List<ChangedLine> areChangesCovered;
 	
 	public void stableVersionTestPerformance() throws Exception {
 		//get all the stable version folders
@@ -119,7 +122,9 @@ public class coreApp
     		//pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
     		//System.out.println(pullRequestCoverage);
         	
-        	coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 390);
+        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 390);
+        	
+        	System.out.println(areChangesCovered);
     	} 
         catch (Exception e) {
 			e.printStackTrace();

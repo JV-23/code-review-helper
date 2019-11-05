@@ -198,8 +198,26 @@ public class serviceApp
 		List<changedLines> lines = new ArrayList<changedLines>();
 		Repository pubRepo = repService.getRepository(parts[3], parts[4]);
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
-
+		//System.out.println("------");
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
+			//System.out.println(pr.getTitle());
+			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
+			prCommits = prs.getCommits(pubRepo, pr.getNumber());
+			if(pr.getNumber() == pullRequestNumber) {
+				for(RepositoryCommit rc : prCommits) {
+					RepositoryCommit anotherCommit = commitService.getCommit(pubRepo, rc.getSha());
+					for(CommitFile f : anotherCommit.getFiles()) {
+						//System.out.println(f.getFilename());
+						//System.out.println(f.getPatch());
+						//System.out.println("------------------------------------");
+						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
+					}
+				}
+			}
+			
+		}
+		
+		for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
