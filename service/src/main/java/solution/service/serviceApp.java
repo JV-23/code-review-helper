@@ -201,13 +201,13 @@ public class serviceApp
 		//System.out.println("------");
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			//System.out.println(pr.getTitle());
-			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
+			System.out.println(" ------------------------ ");
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
 			if(pr.getNumber() == pullRequestNumber) {
 				for(RepositoryCommit rc : prCommits) {
 					RepositoryCommit anotherCommit = commitService.getCommit(pubRepo, rc.getSha());
 					for(CommitFile f : anotherCommit.getFiles()) {
-						//System.out.println(f.getFilename());
+						System.out.println(f.getFilename());
 						//System.out.println(f.getPatch());
 						//System.out.println("------------------------------------");
 						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
@@ -217,7 +217,7 @@ public class serviceApp
 			
 		}
 		
-		for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
+		/*for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
@@ -233,7 +233,7 @@ public class serviceApp
 				}
 			}
 			
-		}
+		}*/
 		return lines;
 	}
 	
@@ -255,7 +255,7 @@ public class serviceApp
 			if(s.startsWith("@@ -")) {
 				for (int i = 0, n = s.length(); i < n; i++) {
 				    char c = s.charAt(i);
-				    if(c == ',') {
+				    if(c == ',' || c == ' ') {
 				    	b = false;
 				    }
 				    if(b == true) {

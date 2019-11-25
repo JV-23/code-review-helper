@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +25,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jdk.jfr.Recording;
+import jdk.jfr.consumer.RecordedEvent;
+import jdk.jfr.consumer.RecordingFile;
 
 import solution.service.*;
 
@@ -77,6 +83,41 @@ public class coreApp
 		}
 	}
 	
+	public void runDduMetric() throws Exception {
+		ProcessBuilder proc = new ProcessBuilder();
+		proc.command("cmd.exe", "/c", "cd stableVersion && mvn ddu:test");
+		proc.redirectErrorStream(true);
+		Process process = proc.start();
+
+		// Read the output
+		
+		BufferedReader reader =  
+		      new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		String line = "";
+		while((line = reader.readLine()) != null) {
+		    System.out.print(line + "\n");
+		}
+		
+		process.waitFor();
+		
+		proc = new ProcessBuilder();
+		proc.command("cmd.exe", "/c", "cd PRVersion && mvn ddu:test");
+		proc.redirectErrorStream(true);
+		process = proc.start();
+
+		// Read the output
+		
+		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		line = "";
+		while((line = reader.readLine()) != null) {
+		    System.out.print(line + "\n");
+		}
+		
+		process.waitFor();
+	}
+	
 	public List<File> getStableVersionFolders(){
 		return stableVersionFolders;
 	}
@@ -93,7 +134,8 @@ public class coreApp
 		return testDifferences;
 	}
 	
-    public static void main( String[] args )
+	@SuppressWarnings("restriction")
+	public static void main( String[] args )
     {
     	serviceApp gitService = new serviceApp();
     	coreApp coreService = new coreApp();
@@ -101,30 +143,55 @@ public class coreApp
     	coverageAnalysis coverage = new coverageAnalysis();
     	
         try {
-        	//TODO: check coverage of changed/added lines specifically
-        	//TODO: identify tests that test the lines that were altered (how?)
 			//repo = gitService.downloadStableVersion();
 			//gitService.runStableVersionTests();
 			//pullRequestNumber = gitService.downloadPRVersion();
         	//gitService.runPRVersionTests();
         	
         	//coreService.stableVersionTestPerformance();
-			//coreService.pullRequestVersionTestPerformance();
-			//coreService.compareTestTimes();
+        	//coreService.pullRequestVersionTestPerformance();
+        	//coreService.compareTestTimes();
         	
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
         	
         	//coverage.generateReports();
-        	//coverage.parseReports();
         	//stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		//pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+    		//System.out.println(stableCoverage);
     		//System.out.println(pullRequestCoverage);
+        	//System.out.println("here");
+        	//areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/apache/storm/", 3127);
         	
-        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 390);
         	
-        	System.out.println(areChangesCovered);
+        	//System.out.println(areChangesCovered);
+        	
+        	//coreService.runDduMetric();
+        	
+        	File file = new File("C:\\Users\\jorge\\Desktop\\recording.jfr");
+        	Path path = file.toPath();
+        	//Recording r = new Recording();
+        	String s = new String();
+        	System.out.println("here");
+        	for (RecordedEvent event : RecordingFile.readAllEvents(path)) {
+        		if(event.getStackTrace() != null) {
+        			s += event.getStackTrace().toString();
+        		}
+        	}
+        	System.out.println("heree");
+        	
+        	Scanner scanner = new Scanner(s);
+        	while (scanner.hasNextLine()) {
+        	  String line = scanner.nextLine();
+        	 if(!line.equals("{") && !line.equals("}") && !line.equals("  truncated = false") && !line.equals("  frames = [") && !line.equals("  truncated = true")) {
+        		 line += " 1";
+        		 String replaced = line.replaceAll(",     ", ";");
+        		 System.out.println(replaced);
+        		 
+        	 }
+        	}
+        	scanner.close();
     	} 
         catch (Exception e) {
 			e.printStackTrace();
