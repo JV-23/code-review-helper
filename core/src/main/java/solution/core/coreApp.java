@@ -136,7 +136,7 @@ public class coreApp
 	
 	@SuppressWarnings("restriction")
 	public static void main( String[] args )
-    {
+    {	
     	serviceApp gitService = new serviceApp();
     	coreApp coreService = new coreApp();
     	Utilities util = new Utilities();
@@ -162,14 +162,15 @@ public class coreApp
     		//System.out.println(stableCoverage);
     		//System.out.println(pullRequestCoverage);
         	//System.out.println("here");
-        	//areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/apache/storm/", 3127);
+        	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	
         	
         	//System.out.println(areChangesCovered);
         	
         	//coreService.runDduMetric();
         	
-        	File file = new File("C:\\Users\\jorge\\Desktop\\recording.jfr");
+        	
+        	/*File file = new File("C:\\Users\\jorge\\Desktop\\recording.jfr");
         	Path path = file.toPath();
         	//Recording r = new Recording();
         	String s = new String();
@@ -191,8 +192,8 @@ public class coreApp
         		 
         	 }
         	}
-        	scanner.close();
-    	} 
+        	scanner.close();*/
+    	}
         catch (Exception e) {
 			e.printStackTrace();
 		}
