@@ -208,11 +208,12 @@ public class serviceApp
 					RepositoryCommit anotherCommit = commitService.getCommit(pubRepo, rc.getSha());
 					for(CommitFile f : anotherCommit.getFiles()) {
 						System.out.println(f.getFilename());
-						//System.out.println(f.getPatch());
+						System.out.println(f.getChanges());
 						//System.out.println("------------------------------------");
 						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
 					}
 				}
+				break;
 			}
 			
 		}
@@ -238,7 +239,7 @@ public class serviceApp
 	}
 	
 	public changedLines filterChangedFilePatchAdditions(String changedFilePatch, String filename) {
-		
+
 		String[] splitData = changedFilePatch.split("(?=\\n\\+)|(?=\\n\\-)|\n"); //splits the (patch) by "\n+" or "\n-" while keeping them. removes "\n"
 		Map<Integer, String> dataToProcess = new HashMap<Integer, String>();
 		int lineNr = 0;

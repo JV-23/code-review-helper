@@ -31,6 +31,7 @@ import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
 
 import solution.service.*;
+import solution.presentation.*;
 
 /**
  * Hello world!
@@ -144,33 +145,36 @@ public class coreApp
     	
         try {
 			//repo = gitService.downloadStableVersion();
-			//gitService.runStableVersionTests();
 			//pullRequestNumber = gitService.downloadPRVersion();
+
+			//gitService.runStableVersionTests();
         	//gitService.runPRVersionTests();
         	
-        	//coreService.stableVersionTestPerformance();
-        	//coreService.pullRequestVersionTestPerformance();
-        	//coreService.compareTestTimes();
-        	
+        	/*coreService.stableVersionTestPerformance();
+        	coreService.pullRequestVersionTestPerformance();
+        	coreService.compareTestTimes();
+        	*/
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
         	
-        	//coverage.generateReports();
-        	//stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
-    		//pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		//System.out.println(stableCoverage);
-    		//System.out.println(pullRequestCoverage);
-        	//System.out.println("here");
-        	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
+        	/*coverage.generateReports();
+        	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
+    		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+    		System.out.println(stableCoverage);
+    		System.out.println(pullRequestCoverage);
+    		coverage.difference(stableCoverage, pullRequestCoverage);
+        	System.out.println("here");
+        	areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
+        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/JodaOrg/joda-time", 511);
         	
-        	
-        	//System.out.println(areChangesCovered);
-        	
+        	System.out.println(areChangesCovered);
+        	*/
         	//coreService.runDduMetric();
+        	 
         	
         	
-        	/*File file = new File("C:\\Users\\jorge\\Desktop\\recording.jfr");
+        	/*File file = new File(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr");
         	Path path = file.toPath();
         	//Recording r = new Recording();
         	String s = new String();
@@ -193,6 +197,9 @@ public class coreApp
         	 }
         	}
         	scanner.close();*/
+        	
+        	presentationApp view = new presentationApp();
+        	view.helloWorld();
     	}
         catch (Exception e) {
 			e.printStackTrace();

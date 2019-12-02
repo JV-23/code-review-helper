@@ -13,8 +13,11 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -145,6 +148,7 @@ public class coverageAnalysis {
 		List<changedLines> lines = null;
 		try {
 			lines = gitService.getPullRequestChanges(repo, pullRequestNumber);
+			System.out.println(lines);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -215,6 +219,21 @@ public class coverageAnalysis {
 			}
 		}
 		return result;
+	}
+	
+	public void difference(Map<String, coverageResults> beforeMap, Map<String, coverageResults> afterMap) {
+		Set<String> removedKeys = new HashSet<String>(beforeMap.keySet());
+		removedKeys.removeAll(afterMap.keySet());
+
+		Set<String> addedKeys = new HashSet<String>(afterMap.keySet());
+		addedKeys.removeAll(beforeMap.keySet());
+
+		Set<Entry<String, coverageResults>> changedEntries = new HashSet<Entry<String, coverageResults>>(afterMap.entrySet());
+		changedEntries.removeAll(beforeMap.entrySet());
+
+		System.out.println("added " + addedKeys);
+		System.out.println("removed " + removedKeys);
+		System.out.println("changed " + changedEntries);
 	}
 
 }

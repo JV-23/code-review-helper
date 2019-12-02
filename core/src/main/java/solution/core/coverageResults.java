@@ -108,5 +108,48 @@ public class coverageResults {
 		result += "covered Methods: " + this.getCoveredMethods() + "\n";
 		return result;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this)
+			return true;
+		
+		if(!(o instanceof coverageResults))
+			return false;
+		
+		coverageResults c = (coverageResults) o;
+		
+		if(this.getMissedInstructions() != c.getMissedInstructions())
+			return false;
+		
+		if(this.getCoveredInstructions() != c.getCoveredInstructions())
+			return false;
+		
+		if(this.getMissedBranches() != c.getMissedBranches())
+			return false;
+		
+		if(this.getCoveredBranches() != c.getCoveredBranches())
+			return false;
+		
+		if(this.getMissedComplexity() != c.getMissedComplexity())
+			return false;
+		
+		if(this.getCoveredComplexity() != c.getCoveredComplexity())
+			return false;
+		
+		if(this.getMissedLines() != c.getMissedLines())
+			return false;
+
+		if(this.getCoveredLines() != c.getCoveredLines())
+			return false;
+		
+		if(this.getMissedMethods() != c.getMissedMethods())
+			return false;
+		
+		if(this.getCoveredMethods() != c.getCoveredMethods())
+			return false;
+		
+		return true;
+	}
 
 }
