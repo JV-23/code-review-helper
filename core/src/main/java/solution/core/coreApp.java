@@ -31,7 +31,7 @@ import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
 
 import solution.service.*;
-import solution.presentation.*;
+//import solution.presentation.*;
 
 /**
  * Hello world!
@@ -142,6 +142,7 @@ public class coreApp
     	coreApp coreService = new coreApp();
     	Utilities util = new Utilities();
     	coverageAnalysis coverage = new coverageAnalysis();
+    	OutputCoverage oc = new OutputCoverage();
     	
         try {
 			//repo = gitService.downloadStableVersion();
@@ -158,11 +159,11 @@ public class coreApp
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
         	
-        	/*coverage.generateReports();
+        	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		System.out.println(stableCoverage);
-    		System.out.println(pullRequestCoverage);
+    		oc.output(stableCoverage);
+    		/*System.out.println(pullRequestCoverage);
     		coverage.difference(stableCoverage, pullRequestCoverage);
         	System.out.println("here");
         	areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
@@ -198,8 +199,8 @@ public class coreApp
         	}
         	scanner.close();*/
         	
-        	presentationApp view = new presentationApp();
-        	view.helloWorld();
+        	//presentationApp view = new presentationApp();
+        	//view.helloWorld();
     	}
         catch (Exception e) {
 			e.printStackTrace();
