@@ -137,5 +137,5 @@ function click(d) {
 }
 
 function color(d) {
-  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+  return d._children ? "#3182bd" : d.children ? "#000000" : (d.data.size > 50 && d.data.name.startsWith("Missed")) ? "#f51b00" : (d.data.size > 50 && d.data.name.startsWith("Covered")) ? "#7bb32e" : "#ffffff";
 }

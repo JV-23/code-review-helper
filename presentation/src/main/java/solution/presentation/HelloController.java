@@ -28,11 +28,11 @@ public class HelloController {
 		model.addAttribute("message", message);
 	    //model.addAttribute("tasks", tasks);
 	
-	return "hello"; //view
+	return "home"; //view
 	}
 	
 	// /hello?name=kotlin
-	@GetMapping("/hello")
+	@GetMapping("/coverage")
 	public String mainWithParam(@RequestParam(name = "name", required = false, defaultValue = "") 
 			String name, Model model) {
 		String line = new String();
