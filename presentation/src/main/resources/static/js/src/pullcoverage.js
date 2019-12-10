@@ -16,7 +16,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("/api", function(error, flare) {
+d3.json("/api2", function(error, flare) {
   if (error) throw error;
   root = d3.hierarchy(flare);
   root.x0 = 0;

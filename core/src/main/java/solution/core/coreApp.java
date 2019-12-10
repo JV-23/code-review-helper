@@ -162,7 +162,8 @@ public class coreApp
         	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		oc.output(stableCoverage);
+    		oc.output(stableCoverage, "stableCoverage.json");
+    		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
     		/*System.out.println(pullRequestCoverage);
     		coverage.difference(stableCoverage, pullRequestCoverage);
         	System.out.println("here");

@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OutputCoverage{
-	public void output(Map<String, coverageResults> results) {
+	public void output(Map<String, coverageResults> results, String filename) {
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode array = JsonNodeFactory.instance.arrayNode();
 		JsonNode node = mapper.createObjectNode();
@@ -21,7 +21,6 @@ public class OutputCoverage{
 		//((ObjectNode)node).put("key", "coverage");
 		
 		for (Map.Entry<String, coverageResults> entry : results.entrySet()) {
-			System.out.println(entry.getKey());
 			JsonNode child = mapper.createObjectNode();
 			((ObjectNode)node).put("name", entry.getKey());
 			ArrayNode a = JsonNodeFactory.instance.arrayNode(); 
@@ -73,7 +72,7 @@ public class OutputCoverage{
 		String str = parent.toString();
 		BufferedWriter writer;
 		try {
-			writer = new BufferedWriter(new FileWriter("stableCoverage.json"));
+			writer = new BufferedWriter(new FileWriter(filename));
 			writer.write(str);
 			writer.close();
 		} catch (IOException e) {

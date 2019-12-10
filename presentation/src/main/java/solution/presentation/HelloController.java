@@ -32,10 +32,10 @@ public class HelloController {
 	}
 	
 	// /hello?name=kotlin
-	@GetMapping("/coverage")
+	@GetMapping("/stablecoverage")
 	public String mainWithParam(@RequestParam(name = "name", required = false, defaultValue = "") 
 			String name, Model model) {
-		String line = new String();
+		/*String line = new String();
 
 		File file = new File(System.getProperty("user.dir"));
 		File file2 = new File(file.getParent() + "\\core\\stableCoverage.json");
@@ -51,14 +51,14 @@ public class HelloController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		model.addAttribute("message", name);
+		model.addAttribute("message", name);*/
 	
 		return "hello"; //view
 	}
 
-	/*@RequestMapping("/test")
+	@GetMapping("/pullcoverage")
 	public String testing() {
-		String line = new String();
+		/*String line = new String();
 		String name = new String();
 		File file = new File(System.getProperty("user.dir"));
 		File file2 = new File(file.getParent() + "\\core\\population.csv");
@@ -73,7 +73,7 @@ public class HelloController {
 			name = stringBuilder.toString();
 		} catch (Exception e) {
 			e.printStackTrace();;
-		}
-		return name;
-	}*/
+		}*/
+		return "pullcoverage";
+	}
 }
