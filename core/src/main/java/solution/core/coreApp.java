@@ -143,6 +143,7 @@ public class coreApp
     	Utilities util = new Utilities();
     	coverageAnalysis coverage = new coverageAnalysis();
     	OutputCoverage oc = new OutputCoverage();
+    	OutputTestTimes ott = new OutputTestTimes();
     	
         try {
 			//repo = gitService.downloadStableVersion();
@@ -151,13 +152,15 @@ public class coreApp
 			//gitService.runStableVersionTests();
         	//gitService.runPRVersionTests();
         	
-        	/*coreService.stableVersionTestPerformance();
+        	coreService.stableVersionTestPerformance();
         	coreService.pullRequestVersionTestPerformance();
         	coreService.compareTestTimes();
-        	*/
-			//System.out.println(coreService.getStableVersionTestTimes());
+        	
+			System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
+			
+			//ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
         	
         	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
