@@ -1,5 +1,5 @@
 var data;
-d3.json("/api3", function(d) {
+d3.json("/api4", function(d) {
 	data = d;
 	var margin = {
     top: 25,
@@ -24,7 +24,8 @@ d3.json("/api3", function(d) {
         .attr("text-anchor", "middle")  
         .style("font-size", "16px") 
         .style("text-decoration", "underline")  
-        .text("Test Times on Stable Version:");
+        .text("Differences in the pull request version (negative values are improvements):");
+	
 	
 	svg.selectAll("bar")
 	  .data(data)
@@ -39,11 +40,11 @@ d3.json("/api3", function(d) {
 	    return i % 2 ? "#83adef" : "lightblue";
 	  });
 	
-	/*svg.selectAll("second-bar")
+	svg.selectAll("second-bar")
 	  .data(data)
 	  .enter().append("rect")
 	  .style("fill", function(d) {
-	    return "green";
+	    return d.status > 0.1 ? "red" : d.status < -0.1 ? "green" : "yellow";
 	  })
 	  .attr("x", 500)
 	  .attr("width", 20)
@@ -51,7 +52,7 @@ d3.json("/api3", function(d) {
 	    return i * 32
 	  })
 	  .attr("height", 30);
-	*/
+	
 	
 	var yTextPadding = 20;
 	svg.selectAll(".bartext")
@@ -61,7 +62,7 @@ d3.json("/api3", function(d) {
 	  .attr("class", "bartext")
 	  .attr("text-anchor", "middle")
 	  .attr("fill", "white")
-	  .attr("x", 270)
+	  .attr("x", 250)
 	  .attr("y", function(d, i) {
 	    return (i * 32) + 22;
 	  })

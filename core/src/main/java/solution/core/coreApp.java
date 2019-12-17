@@ -156,12 +156,14 @@ public class coreApp
         	coreService.pullRequestVersionTestPerformance();
         	coreService.compareTestTimes();
         	
-			System.out.println(coreService.getStableVersionTestTimes());
+			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
 			
-			//ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
-        	
+			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
+        	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
+			
+			
         	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());

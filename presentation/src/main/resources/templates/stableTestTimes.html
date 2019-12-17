@@ -1,5 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <script type="text/javascript" th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="//d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript" src="js/src/stableTestTimes.js" ></script>
+
 <style>
 
 </style>
@@ -20,19 +24,18 @@
     <a class="navbar-brand" href="/">Placeholder</a>
 	<a class="navbar-brand" href="/stablecoverage">Stable Coverage</a>
 	<a class="navbar-brand" href="/pullcoverage">PR Coverage</a>
+	<a class="navbar-brand" href="/stabletesttimes">Stable Test Times</a>
 
 </nav>
 
 <main role="main" class="container">
     
-    <script type="text/javascript" th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-	<script src="//d3js.org/d3.v4.min.js"></script>
-	<script type="text/javascript" src="js/src/stableTestTimes.js" ></script>
 
-
-
+	<script type="text/javascript" src="js/src/timeDifferences.js" ></script>
+	
 
 </main>
 <!-- /.container -->
+
 </body>
 </html>
