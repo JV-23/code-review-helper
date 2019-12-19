@@ -67,7 +67,7 @@ d3.json("/api4", function(d) {
 	    return (i * 32) + 22;
 	  })
 	  .text(function(d) {
-	    return d.name + " : " + d.status;
+	    return d.name.substring(0, 50) + " : " + d.status.substring(0,5);
 	  })
 	  .attr("fill", "black");
 	

@@ -151,5 +151,20 @@ public class coverageResults {
 		
 		return true;
 	}
+	
+	public coverageResults difference(coverageResults c) {
+		coverageResults results = new coverageResults();
+		results.setMissedInstructions(this.getMissedInstructions() - c.getMissedInstructions());
+		results.setCoveredInstructions(this.getCoveredInstructions() - c.getCoveredInstructions());
+		results.setMissedBranches(this.getMissedBranches() - c.getMissedBranches());
+		results.setCoveredBranches(this.getCoveredBranches() - c.getCoveredBranches());
+		results.setMissedComplexity(this.getMissedComplexity() - c.getMissedComplexity());
+		results.setCoveredComplexity(this.getCoveredComplexity() - c.getCoveredComplexity());
+		results.setMissedLines(this.getMissedLines() - c.getMissedLines());
+		results.setCoveredLines(this.getCoveredLines() - c.getCoveredLines());
+		results.setMissedMethods(this.getMissedMethods() - c.getMissedMethods());
+		results.setCoveredMethods(this.getCoveredMethods() - c.getCoveredMethods());
+		return results;
+	}
 
 }

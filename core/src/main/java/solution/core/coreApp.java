@@ -50,6 +50,7 @@ public class coreApp
 	
 	static Map<String, coverageResults> stableCoverage;
 	static Map<String, coverageResults> pullRequestCoverage;
+	static Map<String, coverageResults> coverageDifference;
 	
 	static List<ChangedLine> areChangesCovered;
 	
@@ -149,8 +150,8 @@ public class coreApp
 			//repo = gitService.downloadStableVersion();
 			//pullRequestNumber = gitService.downloadPRVersion();
 
-			//gitService.runStableVersionTests();
-        	//gitService.runPRVersionTests();
+			/*gitService.runStableVersionTests();
+        	gitService.runPRVersionTests();
         	
         	coreService.stableVersionTestPerformance();
         	coreService.pullRequestVersionTestPerformance();
@@ -163,15 +164,16 @@ public class coreApp
 			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
         	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
 			
-			
-        	coverage.generateReports();
+			*/
+        	//coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		oc.output(stableCoverage, "stableCoverage.json");
-    		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
-    		/*System.out.println(pullRequestCoverage);
-    		coverage.difference(stableCoverage, pullRequestCoverage);
-        	System.out.println("here");
+    		//oc.output(stableCoverage, "stableCoverage.json");
+    		//oc.output(pullRequestCoverage, "pullRequestCoverage.json");
+    		//System.out.println(pullRequestCoverage);
+    		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
+    		oc.output(coverageDifference, "coverageDifference.json");
+        	/*System.out.println("here");
         	areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/JodaOrg/joda-time", 511);
         	

@@ -221,7 +221,11 @@ public class coverageAnalysis {
 		return result;
 	}
 	
-	public void difference(Map<String, coverageResults> beforeMap, Map<String, coverageResults> afterMap) {
+	public Map<String, coverageResults> difference(Map<String, coverageResults> beforeMap, Map<String, coverageResults> afterMap) {
+		Map<String, coverageResults> diff = new HashMap<String, coverageResults>();
+		Entry<String, coverageResults> newEntry;
+		coverageResults results;
+		
 		Set<String> removedKeys = new HashSet<String>(beforeMap.keySet());
 		removedKeys.removeAll(afterMap.keySet());
 
@@ -231,9 +235,20 @@ public class coverageAnalysis {
 		Set<Entry<String, coverageResults>> changedEntries = new HashSet<Entry<String, coverageResults>>(afterMap.entrySet());
 		changedEntries.removeAll(beforeMap.entrySet());
 
-		System.out.println("added " + addedKeys);
-		System.out.println("removed " + removedKeys);
-		System.out.println("changed " + changedEntries);
+		for(Entry<String, coverageResults> entry : changedEntries) {
+			for(Map.Entry<String, coverageResults> entry2 : beforeMap.entrySet()) {
+				if(entry2.getKey().equals(entry.getKey())) {
+					results = entry2.getValue().difference(entry.getValue());
+					diff.put(entry2.getKey(), results);
+				}
+			}
+		}	
+		
+		return diff;
+			
+		//System.out.println("added " + addedKeys);
+		//System.out.println("removed " + removedKeys);
+		//System.out.println("changed " + changedEntries);
 	}
 
 }
