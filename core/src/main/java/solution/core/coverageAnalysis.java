@@ -187,6 +187,7 @@ public class coverageAnalysis {
 					
 					for(changedLines changed : lines) {
 						String file = changed.getFilename();
+						Map<Integer, String> changes = changed.getChanges();
 						String[] s = file.split("/");
 						file = s[s.length-1];
 
@@ -208,6 +209,12 @@ public class coverageAnalysis {
 											changed2.setCoveredBranches(Integer.parseInt(element2.getAttribute("cb")));
 											changed2.setMissedBranches(Integer.parseInt(element2.getAttribute("mb")));
 											changed2.setFilename(file);
+											for(Map.Entry<Integer,String> e : changes.entrySet()) {
+												if(e.getKey().equals(Integer.parseInt(element2.getAttribute("nr")))) {
+													changed2.setChange(e.getValue());
+												}
+												
+											}
 											result.add(changed2);
 										}
 									}

@@ -6,6 +6,7 @@ public class ChangedLine {
 	private int coveredInstructions;
 	private int missedBranches;
 	private int coveredBranches;
+	public String change;
 	private String filename;
 	
 	public String getFilename() {
@@ -44,7 +45,13 @@ public class ChangedLine {
 	public void setCoveredBranches(int coveredBranches) {
 		this.coveredBranches = coveredBranches;
 	}
-	
+	public String getChange() {
+		return change;
+	}
+	public void setChange(String change) {
+		this.change = change;
+	}
+
 	@Override
 	public String toString() {
 		String result = new String();
@@ -54,6 +61,7 @@ public class ChangedLine {
 		result += "covered Branches: " + this.getCoveredBranches() + "\n";
 		result += "line Number: " + this.getLineNumber() + "\n";
 		result += "filename: " + this.getFilename() + "\n";
+		result += "change: " + this.getChange() + "\n";
 		return result;
 	}
 }

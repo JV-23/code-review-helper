@@ -172,7 +172,7 @@ public class coreApp
     		//oc.output(pullRequestCoverage, "pullRequestCoverage.json");
     		//System.out.println(pullRequestCoverage);
     		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
-    		oc.output(coverageDifference, "coverageDifference.json");
+    		//oc.output(coverageDifference, "coverageDifference.json");
         	
         	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
