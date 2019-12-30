@@ -173,12 +173,12 @@ public class coreApp
     		//System.out.println(pullRequestCoverage);
     		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
     		oc.output(coverageDifference, "coverageDifference.json");
-        	/*System.out.println("here");
-        	areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
-        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/JodaOrg/joda-time", 511);
+        	
+        	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
+        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
         	
         	System.out.println(areChangesCovered);
-        	*/
+        	
         	//coreService.runDduMetric();
         	 
         	

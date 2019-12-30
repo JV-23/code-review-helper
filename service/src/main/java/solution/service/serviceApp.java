@@ -201,14 +201,14 @@ public class serviceApp
 		//System.out.println("------");
 		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			//System.out.println(pr.getTitle());
-			System.out.println(" ------------------------ ");
+			//System.out.println(" ------------------------ ");
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
 			if(pr.getNumber() == pullRequestNumber) {
 				for(RepositoryCommit rc : prCommits) {
 					RepositoryCommit anotherCommit = commitService.getCommit(pubRepo, rc.getSha());
 					for(CommitFile f : anotherCommit.getFiles()) {
-						System.out.println(f.getFilename());
-						System.out.println(f.getChanges());
+						//System.out.println(f.getFilename());
+						//System.out.println(f.getChanges());
 						//System.out.println("------------------------------------");
 						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
 					}

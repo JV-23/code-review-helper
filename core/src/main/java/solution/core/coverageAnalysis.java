@@ -148,12 +148,12 @@ public class coverageAnalysis {
 		List<changedLines> lines = null;
 		try {
 			lines = gitService.getPullRequestChanges(repo, pullRequestNumber);
-			System.out.println(lines);
+			//System.out.println(lines);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(lines);
+		//System.out.println(lines);
 		try {
 			parseChanges(new File(System.getProperty("user.dir") + "\\PRVersion"), lines, result);
 		} catch(Exception e) {
@@ -238,7 +238,7 @@ public class coverageAnalysis {
 		for(Entry<String, coverageResults> entry : changedEntries) {
 			for(Map.Entry<String, coverageResults> entry2 : beforeMap.entrySet()) {
 				if(entry2.getKey().equals(entry.getKey())) {
-					results = entry2.getValue().difference(entry.getValue());
+					results = entry.getValue().difference(entry2.getValue());
 					diff.put(entry2.getKey(), results);
 				}
 			}
