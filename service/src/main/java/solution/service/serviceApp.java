@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -22,6 +25,7 @@ import java.util.Scanner;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.Repository;
@@ -195,11 +199,15 @@ public class serviceApp
 	
 	public List<changedLines> getPullRequestChanges(String repo, int pullRequestNumber) throws Exception {
 		String[] parts = repo.split("/");
+		String result = "";
+		String result2 = "";
+		Map<String, String> diff = new HashMap<String, String>();
+		Integer i = 1;
 		List<changedLines> lines = new ArrayList<changedLines>();
 		Repository pubRepo = repService.getRepository(parts[3], parts[4]);
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
 		//System.out.println("------");
-		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
+		for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(" ------------------------ ");
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
@@ -210,7 +218,12 @@ public class serviceApp
 						//System.out.println(f.getFilename());
 						//System.out.println(f.getChanges());
 						//System.out.println("------------------------------------");
+						//System.out.println(f.getPatch());
 						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
+						result = parseChange(new File(System.getProperty("user.dir") + "\\PRVersion"), filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()), result2);
+						//System.out.println(result);
+						diff.put(result, "--- " + f.getFilename() + "\n+++ " + f.getFilename() +"\n" + f.getPatch());
+						i++;
 					}
 				}
 				break;
@@ -218,6 +231,14 @@ public class serviceApp
 			
 		}
 		
+		FileOutputStream f = new FileOutputStream(new File("diffs"));
+		ObjectOutputStream o = new ObjectOutputStream(f);
+
+		// Write objects to file
+		o.writeObject(diff);
+
+		o.close();
+		f.close();
 		/*for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(pr.getNumber() + " ------------------------ " + pr.getTitle());
@@ -236,6 +257,82 @@ public class serviceApp
 			
 		}*/
 		return lines;
+	}
+	
+	public String parseChange(File folder, changedLines changed, String result) throws Exception {
+		Document doc;
+		for (final File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				result = parseChange(fileEntry, changed, result);
+			} 
+			else {
+				if(fileEntry.getName().endsWith("jacoco.xml")) {
+					File xmlFile = new File(fileEntry.toString());
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					try{
+						doc = dBuilder.parse(xmlFile);
+					}
+					catch(FileNotFoundException e) {
+						File source = new File(System.getProperty("user.dir") + "\\report.dtd");
+						File dest = new File(fileEntry.getParent() + "\\report.dtd");
+					    FileUtils.copyFile(source, dest);
+					    doc = dBuilder.parse(xmlFile);
+					}
+					doc.normalize();
+					
+					String file = changed.getFilename();
+					Map<Integer, String> changes = changed.getChanges();
+					String[] s = file.split("/");
+					file = s[s.length-1];
+
+					NodeList nodeList = doc.getElementsByTagName("sourcefile");
+					for(int i = 0; i < nodeList.getLength(); i++) {
+						Node node = nodeList.item(i);
+						Element element = (Element) node;
+						if(element.getAttribute("name").equals(file)) {
+							for(Map.Entry<Integer, String> entry : changed.getChanges().entrySet()) {
+								NodeList nodeList2 = node.getChildNodes();
+								for(int j = 0; j < nodeList2.getLength(); j++) {
+									Node node2 = nodeList2.item(j);
+									Element element2 = (Element) node2;
+									if(element2.getAttribute("nr").equals(entry.getKey().toString())) {
+										/*ChangedLine changed2 = new ChangedLine();
+										changed2.setLineNumber(Integer.parseInt(element2.getAttribute("nr")));
+										changed2.setCoveredInstructions(Integer.parseInt(element2.getAttribute("ci")));
+										changed2.setMissedInstructions(Integer.parseInt(element2.getAttribute("mi")));
+										changed2.setCoveredBranches(Integer.parseInt(element2.getAttribute("cb")));
+										changed2.setMissedBranches(Integer.parseInt(element2.getAttribute("mb")));
+										changed2.setFilename(file);
+										for(Map.Entry<Integer,String> e : changes.entrySet()) {
+											if(e.getKey().equals(Integer.parseInt(element2.getAttribute("nr")))) {
+												changed2.setChange(e.getValue());
+											}
+											
+										}
+										result.add(changed2);*/
+										//System.out.println("here");
+										result += " Line Number: " + Integer.parseInt(element2.getAttribute("nr")) + 
+												" Covered Instructions: " +  Integer.parseInt(element2.getAttribute("ci")) +
+												" Missed Instructions: " + Integer.parseInt(element2.getAttribute("mi")) +
+												" Covered Branches: " + Integer.parseInt(element2.getAttribute("cb")) +
+												" Missed Branches: " + Integer.parseInt(element2.getAttribute("mb")) +
+												"<br>";
+										//System.out.println(result);
+									}
+								}
+
+							}
+							return result;
+						}
+					}
+
+				}
+
+			}
+		}
+		//System.out.println(result);
+		return result;
 	}
 	
 	public changedLines filterChangedFilePatchAdditions(String changedFilePatch, String filename) {
@@ -279,6 +376,7 @@ public class serviceApp
 		System.out.println("----------------");
 		*/
 		changedLines change = new changedLines(filename, dataToProcess);
+		//System.out.println(change);
 		return change;
 	}
 

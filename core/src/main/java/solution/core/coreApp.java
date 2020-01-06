@@ -177,7 +177,7 @@ public class coreApp
         	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
         	
-        	System.out.println(areChangesCovered);
+        	//System.out.println(areChangesCovered);
         	
         	//coreService.runDduMetric();
         	 

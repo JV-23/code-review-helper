@@ -6,7 +6,7 @@ public class ChangedLine {
 	private int coveredInstructions;
 	private int missedBranches;
 	private int coveredBranches;
-	public String change;
+	private String change;
 	private String filename;
 	
 	public String getFilename() {

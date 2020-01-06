@@ -154,12 +154,12 @@ public class coverageAnalysis {
 			e.printStackTrace();
 		}
 		//System.out.println(lines);
-		try {
+		/*try {
 			parseChanges(new File(System.getProperty("user.dir") + "\\PRVersion"), lines, result);
 		} catch(Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		return result;
 	}
 	
