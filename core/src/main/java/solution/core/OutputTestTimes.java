@@ -23,7 +23,7 @@ public class OutputTestTimes {
 			((ObjectNode)node).put("status", entry.getValue());
 			array.add(node.deepCopy());
 		}
-				
+
 		String str = array.toString();
 		BufferedWriter writer;
 		try {

@@ -1,7 +1,9 @@
 package solution.core;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -149,8 +151,8 @@ public class coreApp
         try {
 			//repo = gitService.downloadStableVersion();
 			//pullRequestNumber = gitService.downloadPRVersion();
-
-			/*gitService.runStableVersionTests();
+        	/*
+			gitService.runStableVersionTests();
         	gitService.runPRVersionTests();
         	
         	coreService.stableVersionTestPerformance();
@@ -163,16 +165,16 @@ public class coreApp
 			
 			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
         	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
-			
 			*/
-        	//coverage.generateReports();
+			/*
+        	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		//oc.output(stableCoverage, "stableCoverage.json");
-    		//oc.output(pullRequestCoverage, "pullRequestCoverage.json");
+    		oc.output(stableCoverage, "stableCoverage.json");
+    		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
     		//System.out.println(pullRequestCoverage);
     		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
-    		//oc.output(coverageDifference, "coverageDifference.json");
+    		oc.output(coverageDifference, "coverageDifference.json");
         	
         	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
@@ -180,10 +182,11 @@ public class coreApp
         	//System.out.println(areChangesCovered);
         	
         	//coreService.runDduMetric();
-        	 
+        	
+        	*/
         	
         	
-        	/*File file = new File(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr");
+        	File file = new File(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr");
         	Path path = file.toPath();
         	//Recording r = new Recording();
         	String s = new String();
@@ -194,21 +197,22 @@ public class coreApp
         		}
         	}
         	System.out.println("heree");
-        	
+        	BufferedWriter writer;
+			writer = new BufferedWriter(new FileWriter("prprofile"));
+
         	Scanner scanner = new Scanner(s);
         	while (scanner.hasNextLine()) {
         	  String line = scanner.nextLine();
         	 if(!line.equals("{") && !line.equals("}") && !line.equals("  truncated = false") && !line.equals("  frames = [") && !line.equals("  truncated = true")) {
         		 line += " 1";
         		 String replaced = line.replaceAll(",     ", ";");
-        		 System.out.println(replaced);
+        		 writer.write(replaced + "\n");
         		 
         	 }
         	}
-        	scanner.close();*/
+        	writer.close();
+        	scanner.close();
         	
-        	//presentationApp view = new presentationApp();
-        	//view.helloWorld();
     	}
         catch (Exception e) {
 			e.printStackTrace();
