@@ -82,7 +82,7 @@ public class coreApp
 				testDifferences.put(stableEntry.getKey(), String.valueOf(i));
 			}
 			else {
-				System.out.println(stableEntry);
+				testDifferences.put(stableEntry.getKey(), "???");
 			}
 		}
 	}
@@ -154,7 +154,7 @@ public class coreApp
         	/*
 			gitService.runStableVersionTests();
         	gitService.runPRVersionTests();
-        	
+        	*/
         	coreService.stableVersionTestPerformance();
         	coreService.pullRequestVersionTestPerformance();
         	coreService.compareTestTimes();
@@ -165,27 +165,9 @@ public class coreApp
 			
 			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
         	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
-			*/
-			/*
-        	coverage.generateReports();
-        	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
-    		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
-    		oc.output(stableCoverage, "stableCoverage.json");
-    		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
-    		//System.out.println(pullRequestCoverage);
-    		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
-    		oc.output(coverageDifference, "coverageDifference.json");
+			
         	
-        	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
-        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
-        	
-        	//System.out.println(areChangesCovered);
-        	
-        	//coreService.runDduMetric();
-        	
-        	*/
-        	
-        	
+        	/*
         	File file = new File(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr");
         	Path path = file.toPath();
         	//Recording r = new Recording();
@@ -212,6 +194,25 @@ public class coreApp
         	}
         	writer.close();
         	scanner.close();
+        	*/
+			/*
+        	coverage.generateReports();
+        	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
+    		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+    		oc.output(stableCoverage, "stableCoverage.json");
+    		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
+    		//System.out.println(pullRequestCoverage);
+    		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
+    		oc.output(coverageDifference, "coverageDifference.json");
+        	
+        	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
+        	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
+        	
+        	//System.out.println(areChangesCovered);
+        	
+        	//coreService.runDduMetric();
+        	
+        	*/
         	
     	}
         catch (Exception e) {

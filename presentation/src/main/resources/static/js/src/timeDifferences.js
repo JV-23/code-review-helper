@@ -44,7 +44,7 @@ d3.json("/api4", function(d) {
 	  .data(data)
 	  .enter().append("rect")
 	  .style("fill", function(d) {
-	    return d.status > 0.1 ? "red" : d.status < -0.1 ? "green" : "yellow";
+	    return d.status > 0.1 ? "red" : d.status < -0.1 ? "green" : d.status == '???' ? "red" : "yellow";
 	  })
 	  .attr("x", 500)
 	  .attr("width", 20)
