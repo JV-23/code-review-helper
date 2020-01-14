@@ -122,23 +122,11 @@ public class HelloController {
 		oi.close();
 		fi.close();
 		
-		//model.addAttribute("str", diff);
-		
-		/*String name = new String();
-		File file = new File(System.getProperty("user.dir"));
-		File file2 = new File(file.getParent() + "\\core\\population.csv");
-		FileSystemResource coverage = new FileSystemResource(file2);
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(coverage.getInputStream()),1024);
-			StringBuilder stringBuilder = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				stringBuilder.append(line).append('\n');
-			}
-			br.close();
-			name = stringBuilder.toString();
-		} catch (Exception e) {
-			e.printStackTrace();;
-		}*/
 		return "coverageonchanges";
+	}
+	
+	@GetMapping("/flamegraphs")
+	public String flameGraphs(Model model) {
+		return "flamegraphs";
 	}
 }
