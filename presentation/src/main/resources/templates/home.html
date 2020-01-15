@@ -38,11 +38,26 @@
 
 </form>
     <div class="starter-template">
-        <h1>Spring Boot Web Thymeleaf Example</h1>
+        <h1>Analysis of pull request</h1>
         <h2>
-            <span th:text="'This is a test message'"></span>
+            <span th:text="'Options'"></span>
         </h2>
+		<h4>
+            <span th:text="'Coverage - Displays coverage of both versions and differences'"></span>
+		</h4>
+		<h4>
+            <span th:text="'Test Times - Displays the test time differences between both versions'"></span>
+        </h4>	
+		<h4>
+			<span th:text="'Changed Lines Coverage - Displays the lines that were altered in the pull request and whether they are covered by the test suite'"></span>
+		</h4>
+		<h4>
+			<span th:text="'Flame Graphs - Displays flame graphs representing the execution of the tests of both versions'"></span>
+		</h4>
+	
     </div>
+
+			 
 
 
 </main>

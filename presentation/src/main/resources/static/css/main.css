@@ -3,15 +3,15 @@ body {
 }
 .starter-template {
   padding: 3rem 1.5rem;
-  text-align: center;
+  text-align: left;
 }
 
 h1{
-	color:#0000FF;
+	color:black;
 }
 
 h2{
-	color:#FF0000;
+	color:black;
 }
 
 ul {
