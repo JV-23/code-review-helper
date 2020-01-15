@@ -122,6 +122,37 @@ public class coreApp
 		process.waitFor();
 	}
 	
+	@SuppressWarnings("restriction")
+	public void generateTrace(String recordingLocation, String outputName) throws IOException {
+		File file = new File(recordingLocation);
+    	Path path = file.toPath();
+    	//Recording r = new Recording();
+    	String s = new String();
+    	System.out.println("Processing recording...");
+    	for (RecordedEvent event : RecordingFile.readAllEvents(path)) {
+    		if(event.getStackTrace() != null) {
+    			s += event.getStackTrace().toString();
+    		}
+    	}
+    	System.out.println("Recording processed, writing to file");
+    	BufferedWriter writer;
+		writer = new BufferedWriter(new FileWriter(outputName));
+
+    	Scanner scanner = new Scanner(s);
+    	while (scanner.hasNextLine()) {
+    	  String line = scanner.nextLine();
+    	 if(!line.equals("{") && !line.equals("}") && !line.equals("  truncated = false") && !line.equals("  frames = [") && !line.equals("  truncated = true")) {
+    		 line += " 1";
+    		 String replaced = line.replaceAll(",     ", ";");
+    		 writer.write(replaced + "\n");
+    		 
+    	 }
+    	}
+    	writer.close();
+    	scanner.close();
+
+	}
+	
 	public List<File> getStableVersionFolders(){
 		return stableVersionFolders;
 	}
@@ -138,7 +169,6 @@ public class coreApp
 		return testDifferences;
 	}
 	
-	@SuppressWarnings("restriction")
 	public static void main( String[] args )
     {	
     	serviceApp gitService = new serviceApp();
@@ -155,46 +185,21 @@ public class coreApp
 			gitService.runStableVersionTests();
         	gitService.runPRVersionTests();
         	*/
-        	coreService.stableVersionTestPerformance();
-        	coreService.pullRequestVersionTestPerformance();
-        	coreService.compareTestTimes();
+        	//coreService.stableVersionTestPerformance();
+        	//coreService.pullRequestVersionTestPerformance();
+        	//coreService.compareTestTimes();
         	
 			//System.out.println(coreService.getStableVersionTestTimes());
 			//System.out.println(coreService.getPullRequestTestTimes());
 			//System.out.println(coreService.getTestDifferences());
 			
-			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
-        	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
+			//ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
+        	//ott.output(coreService.getTestDifferences(), "timeDifferences.json");
 			
+        	coreService.generateTrace(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr", "prprofile");
+        	coreService.generateTrace(System.getProperty("user.dir") + "\\stableVersion\\recording.jfr", "stableprofile");
         	
-        	/*
-        	File file = new File(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr");
-        	Path path = file.toPath();
-        	//Recording r = new Recording();
-        	String s = new String();
-        	System.out.println("here");
-        	for (RecordedEvent event : RecordingFile.readAllEvents(path)) {
-        		if(event.getStackTrace() != null) {
-        			s += event.getStackTrace().toString();
-        		}
-        	}
-        	System.out.println("heree");
-        	BufferedWriter writer;
-			writer = new BufferedWriter(new FileWriter("prprofile"));
-
-        	Scanner scanner = new Scanner(s);
-        	while (scanner.hasNextLine()) {
-        	  String line = scanner.nextLine();
-        	 if(!line.equals("{") && !line.equals("}") && !line.equals("  truncated = false") && !line.equals("  frames = [") && !line.equals("  truncated = true")) {
-        		 line += " 1";
-        		 String replaced = line.replaceAll(",     ", ";");
-        		 writer.write(replaced + "\n");
-        		 
-        	 }
-        	}
-        	writer.close();
-        	scanner.close();
-        	*/
+        	        	
 			/*
         	coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
