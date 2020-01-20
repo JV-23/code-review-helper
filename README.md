@@ -3,8 +3,7 @@ Windows only, certain command line commands are called and don't work on Linux.
 
 To-Do list:
 
--find coverage changes in areas of code that weren't altered
--fix core order so flame graphs aren't empty and refactor flame graph logic to its own function
-
--views: stable coverage, pull request coverage, coverage differences, coverage on changes, changes in coverage in areas that weren't altered, stable test times, pull request test times, test time differences, stable version flame graph, pull request flame graph
--general coverage, coverage in specific areas, test times, flame graphs
+-find coverage changes in areas of code that weren't altered:
+	-needs to not go through git to find the path of every file, save all files in a structure and search that way
+	-needs to work with a repository added by user at start (applies in general to the project)
+	-needs to be added to a view
