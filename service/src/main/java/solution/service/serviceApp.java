@@ -30,8 +30,11 @@ import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryContents;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
+import org.eclipse.egit.github.core.service.ContentsService;
+import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.PullRequestService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.eclipse.jgit.api.Git;
@@ -56,9 +59,14 @@ public class serviceApp
 	private RepositoryService repService = new RepositoryService(client);
 	private CommitService commitService = new CommitService(client);
 	private PullRequestService prs = new PullRequestService(client);
+	private List<String> changedFiles = new ArrayList<String>();
 	
 	public serviceApp() {
 		client.setOAuth2Token("3d64bbf822b565f5cdce10c24ca090fef080bff1");
+	}
+	
+	public List<String> getChangedFiles(){
+		return changedFiles;
 	}
 	
 	public String downloadStableVersion() throws Exception{
@@ -380,6 +388,47 @@ public class serviceApp
 		return change;
 	}
 
+public void retrieveRepositoryFilesNames(String path, String fileToFind) {
+		
+		try {
+			Repository pubRepo = repService.getRepository("bonigarcia", "webdrivermanager");
+			ContentsService content = new ContentsService(this.client);
+			DataService dataService = new DataService(this.client);
+			//System.out.println(pubRepo.getName());
+			boolean hasDirs = false;
+			List<RepositoryContents> rootContent = null;
+			if(path == null) {
+				rootContent = content.getContents(pubRepo);
+			}else {
+				rootContent = content.getContents(pubRepo, path);
+			}
+			
+			for(RepositoryContents repContent : rootContent) {
+				//System.out.println(repContent.getPath());
+				//System.out.println("content is: " + repContent.getType());
+				if(repContent.getType().equals("dir")) {
+					hasDirs = true;
+					while(hasDirs) {
+						//System.out.println("Dir: " + repContent.getPath());
+						hasDirs = false;
+						retrieveRepositoryFilesNames(repContent.getPath(), fileToFind);
+					}
+				}
+				else {
+					if(repContent.getPath().endsWith(fileToFind)) {
+						String filePath = repContent.getPath();
+						//this.repositoryJavaFiles.put(filePath, createFilePathURL(filePath));
+						this.changedFiles.add(repContent.getPath());
+					}
+			
+					
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
     public static void main( String[] args ){
     	/*criar autenticaçao de utilizador*/

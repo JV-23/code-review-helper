@@ -154,12 +154,12 @@ public class coverageAnalysis {
 			e.printStackTrace();
 		}
 		//System.out.println(lines);
-		/*try {
+		try {
 			parseChanges(new File(System.getProperty("user.dir") + "\\PRVersion"), lines, result);
 		} catch(Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		return result;
 	}
 	
@@ -189,13 +189,13 @@ public class coverageAnalysis {
 						String file = changed.getFilename();
 						Map<Integer, String> changes = changed.getChanges();
 						String[] s = file.split("/");
-						file = s[s.length-1];
+						String file2 = s[s.length-1];
 
 						NodeList nodeList = doc.getElementsByTagName("sourcefile");
 						for(int i = 0; i < nodeList.getLength(); i++) {
 							Node node = nodeList.item(i);
 							Element element = (Element) node;
-							if(element.getAttribute("name").equals(file)) {
+							if(element.getAttribute("name").equals(file2)) {
 								for(Map.Entry<Integer, String> entry : changed.getChanges().entrySet()) {
 									NodeList nodeList2 = node.getChildNodes();
 									for(int j = 0; j < nodeList2.getLength(); j++) {
@@ -256,6 +256,32 @@ public class coverageAnalysis {
 		//System.out.println("added " + addedKeys);
 		//System.out.println("removed " + removedKeys);
 		//System.out.println("changed " + changedEntries);
+	}
+	
+	public void findDeadCode(Map<String, coverageResults> coverageDiff, List<ChangedLine> changes, serviceApp gitService) {
+		Set<String> codeChanged = new HashSet<String>();
+		Set<String> coverageChanged = new HashSet<String>();
+		Set<String> outcome = new HashSet<String>();
+		for(ChangedLine change : changes) {
+			String[] s = change.getFilename().split("/");
+			String filename = s[s.length-1];
+			codeChanged.add(filename);
+		}
+		for (Map.Entry<String, coverageResults> pair : coverageDiff.entrySet()) {
+			String[] t = pair.getKey().split("/");
+			String file = t[t.length-1];
+			coverageChanged.add(file + ".java");
+		}
+		coverageChanged.removeAll(codeChanged);
+		
+		
+		for(String s : coverageChanged) {
+			System.out.println(s);
+			gitService.retrieveRepositoryFilesNames(null, s);
+		}
+		System.out.println(gitService.getChangedFiles());
+		//System.out.println(outcome);
+		return;
 	}
 
 }

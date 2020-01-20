@@ -196,12 +196,13 @@ public class coreApp
 			//ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
         	//ott.output(coreService.getTestDifferences(), "timeDifferences.json");
 			
-        	coreService.generateTrace(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr", "prprofile");
-        	coreService.generateTrace(System.getProperty("user.dir") + "\\stableVersion\\recording.jfr", "stableprofile");
+        	//coreService.generateTrace(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr", "prprofile");
+        	//coreService.generateTrace(System.getProperty("user.dir") + "\\stableVersion\\recording.jfr", "stableprofile");
         	
+
         	        	
-			/*
-        	coverage.generateReports();
+        	
+        	//coverage.generateReports();
         	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
     		oc.output(stableCoverage, "stableCoverage.json");
@@ -213,11 +214,18 @@ public class coreApp
         	//areChangesCovered = coverage.checkIfChangesAreCovered(repo, pullRequestNumber);
         	areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
         	
-        	//System.out.println(areChangesCovered);
+        	//gitService.retrieveRepositoryFilesNames(null, "Preferences.java");
+        	//gitService.retrieveRepositoryFilesNames(null, "HttpClient.java");
         	
+        	//System.out.println(gitService.getChangedFiles());
+        	/*System.out.println(coverageDifference);
+        	System.out.println("-----------------");
+        	System.out.println(areChangesCovered);
+        	*/
+        	coverage.findDeadCode(coverageDifference, areChangesCovered, gitService);
         	//coreService.runDduMetric();
         	
-        	*/
+        	
         	
     	}
         catch (Exception e) {
