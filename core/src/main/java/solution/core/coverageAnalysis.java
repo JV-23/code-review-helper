@@ -258,7 +258,7 @@ public class coverageAnalysis {
 		//System.out.println("changed " + changedEntries);
 	}
 	
-	public void findDeadCode(Map<String, coverageResults> coverageDiff, List<ChangedLine> changes, serviceApp gitService) {
+	public Set<String> findDeadCode(Map<String, coverageResults> coverageDiff, List<ChangedLine> changes, serviceApp gitService, String repo) {
 		Set<String> codeChanged = new HashSet<String>();
 		Set<String> coverageChanged = new HashSet<String>();
 		Set<String> outcome = new HashSet<String>();
@@ -274,14 +274,13 @@ public class coverageAnalysis {
 		}
 		coverageChanged.removeAll(codeChanged);
 		
-		
+		gitService.retrieveRepositoryFilesNames(null, "", repo);
 		for(String s : coverageChanged) {
-			System.out.println(s);
-			gitService.retrieveRepositoryFilesNames(null, s);
+			outcome.add(gitService.findFile(s));
 		}
-		System.out.println(gitService.getChangedFiles());
 		//System.out.println(outcome);
-		return;
+		//System.out.println(outcome);
+		return outcome;
 	}
 
 }

@@ -60,6 +60,7 @@ public class serviceApp
 	private CommitService commitService = new CommitService(client);
 	private PullRequestService prs = new PullRequestService(client);
 	private List<String> changedFiles = new ArrayList<String>();
+	private List<String> repoFiles = new ArrayList<String>();
 	
 	public serviceApp() {
 		client.setOAuth2Token("3d64bbf822b565f5cdce10c24ca090fef080bff1");
@@ -69,6 +70,9 @@ public class serviceApp
 		return changedFiles;
 	}
 	
+	public List<String> getRepoFiles(){
+		return repoFiles;
+	}	
 	public String downloadStableVersion() throws Exception{
 		Console cnsl = null;
 		String username = null;
@@ -388,10 +392,11 @@ public class serviceApp
 		return change;
 	}
 
-public void retrieveRepositoryFilesNames(String path, String fileToFind) {
+public void retrieveRepositoryFilesNames(String path, String fileToFind, String repo) {
 		
 		try {
-			Repository pubRepo = repService.getRepository("bonigarcia", "webdrivermanager");
+			String[] s = repo.split("/");
+			Repository pubRepo = repService.getRepository(s[s.length-2], s[s.length-1]);
 			ContentsService content = new ContentsService(this.client);
 			DataService dataService = new DataService(this.client);
 			//System.out.println(pubRepo.getName());
@@ -411,23 +416,26 @@ public void retrieveRepositoryFilesNames(String path, String fileToFind) {
 					while(hasDirs) {
 						//System.out.println("Dir: " + repContent.getPath());
 						hasDirs = false;
-						retrieveRepositoryFilesNames(repContent.getPath(), fileToFind);
+						retrieveRepositoryFilesNames(repContent.getPath(), fileToFind, repo);
 					}
 				}
 				else {
-					if(repContent.getPath().endsWith(fileToFind)) {
-						String filePath = repContent.getPath();
-						//this.repositoryJavaFiles.put(filePath, createFilePathURL(filePath));
-						this.changedFiles.add(repContent.getPath());
-					}
-			
-					
+					this.repoFiles.add(repContent.getPath());
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public String findFile(String file) {
+		for(String s : this.repoFiles) {
+			if(s.endsWith(file)) {
+				return s;
+			}
+		}
+		return null;
 	}
 	
     public static void main( String[] args ){

@@ -16,9 +16,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,6 +57,8 @@ public class coreApp
 	static Map<String, coverageResults> coverageDifference;
 	
 	static List<ChangedLine> areChangesCovered;
+	
+	static Set<String> relatedAreas = new HashSet<String>();
 	
 	public void stableVersionTestPerformance() throws Exception {
 		//get all the stable version folders
@@ -179,8 +183,61 @@ public class coreApp
     	OutputTestTimes ott = new OutputTestTimes();
     	
         try {
-			//repo = gitService.downloadStableVersion();
-			//pullRequestNumber = gitService.downloadPRVersion();
+        	Scanner in = new Scanner(System.in);
+        	System.out.println("Please enter option (1 - download repos; 2 - run analysis): ");
+        	int option = in.nextInt();
+        	
+        	switch(option) {
+        		case 1: 
+        			repo = gitService.downloadStableVersion();
+        			pullRequestNumber = gitService.downloadPRVersion();
+        			break;
+        		case 2:
+        			Scanner in2 = new Scanner(System.in);
+        			System.out.println("Please enter link to repository: ");
+        			String repo = in2.nextLine();
+        			System.out.println("Please enter pull request number: ");
+        			int number = in2.nextInt();
+        			/*gitService.runStableVersionTests();
+                	gitService.runPRVersionTests();
+                	
+                	coreService.stableVersionTestPerformance();
+                	coreService.pullRequestVersionTestPerformance();
+                	coreService.compareTestTimes();
+                	
+        			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
+                	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
+
+                	coreService.generateTrace(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr", "prprofile");
+                	coreService.generateTrace(System.getProperty("user.dir") + "\\stableVersion\\recording.jfr", "stableprofile");
+					*/
+        			
+                	//coverage.generateReports();
+                	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
+            		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
+            		oc.output(stableCoverage, "stableCoverage.json");
+            		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
+
+            		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
+            		oc.output(coverageDifference, "coverageDifference.json");
+                	
+                	areChangesCovered = coverage.checkIfChangesAreCovered(repo, number);
+                	//areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
+                	
+                	//gitService.retrieveRepositoryFilesNames(null, "Preferences.java");
+                	//gitService.retrieveRepositoryFilesNames(null, "HttpClient.java");
+                	
+                	//System.out.println(gitService.getChangedFiles());
+                	//System.out.println(coverageDifference);
+                	//System.out.println("-----------------");
+                	//System.out.println(areChangesCovered);
+                	
+                	relatedAreas = coverage.findDeadCode(coverageDifference, areChangesCovered, gitService, repo);
+
+                	System.out.println(relatedAreas);
+        			break;
+        	}
+
         	/*
 			gitService.runStableVersionTests();
         	gitService.runPRVersionTests();
@@ -203,7 +260,7 @@ public class coreApp
         	        	
         	
         	//coverage.generateReports();
-        	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
+        	/*stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
     		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
     		oc.output(stableCoverage, "stableCoverage.json");
     		oc.output(pullRequestCoverage, "pullRequestCoverage.json");
@@ -222,7 +279,7 @@ public class coreApp
         	System.out.println("-----------------");
         	System.out.println(areChangesCovered);
         	*/
-        	coverage.findDeadCode(coverageDifference, areChangesCovered, gitService);
+        	//coverage.findDeadCode(coverageDifference, areChangesCovered, gitService);
         	//coreService.runDduMetric();
         	
         	
