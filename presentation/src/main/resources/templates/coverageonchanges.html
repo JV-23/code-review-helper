@@ -6,35 +6,6 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.12.2/diff2html.js"></script>
 	
 
-<style>
-#test {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#test td, #test th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 4px;
-  padding-left: 20px;
-  font-size: 15px;
-  font-weight: normal;
-}
-
-#test th {
-  background-color: #f7f7f7;
-}
-
-#test td:hover {
-    background: #fafafa;
-}
-
-#test a{
-	color: #3278de;
-}
-
-</style>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -44,7 +15,7 @@
 
     <link rel="stylesheet" th:href="@{webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
+	<link rel="stylesheet" th:href="@{/css/coverageTables.css}"/>
 </head>
 
 <body>
@@ -81,7 +52,7 @@
 			console.log(data.length);
 			var test = "<table id='test'><tr><th>Files that weren't altered but had coverage changes:</th></tr>";
 			for(var x = 0; x < data.length; x++){
-			 	test += "<tr><td><a href=\"" + data[x].link + "\">" + data[x].name + "</a></td></tr>";
+			 	test += "<tr><td><a href=\"" + data[x].link + "\">" + data[x].link + "</a></td></tr>";
 			} 
 			test += "</table>"
 			document.getElementById("demo").innerHTML = test;

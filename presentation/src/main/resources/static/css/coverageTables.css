@@ -1,0 +1,26 @@
+#test {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#test td, #test th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 4px;
+  padding-left: 20px;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+#test th {
+  background-color: #f7f7f7;
+}
+
+#test td:hover {
+    background: #fafafa;
+}
+
+#test a{
+	color: #3278de;
+}
