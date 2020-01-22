@@ -3,7 +3,9 @@ package solution.core;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +75,30 @@ public class OutputCoverage{
 		BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter(filename));
+			writer.write(str);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void outputRelatedFiles(Set<String> files, String repo) {
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode array = JsonNodeFactory.instance.arrayNode();
+		JsonNode node = mapper.createObjectNode();
+		
+		for (String entry : files) {
+			JsonNode child = mapper.createObjectNode();
+			String file[] = entry.split("/");
+			((ObjectNode)node).put("name", file[file.length-1]);
+			((ObjectNode)node).put("link", repo + "/blob/master/" + entry);
+			array.add(node.deepCopy());
+		}
+
+		String str = array.toString();
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter("relatedFiles.json"));
 			writer.write(str);
 			writer.close();
 		} catch (IOException e) {

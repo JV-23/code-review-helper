@@ -158,4 +158,25 @@ public class TestController {
 		}
 		return name;
 	}
+	
+	@RequestMapping("/api8")
+	public String index8() {
+		String line = new String();
+		String name = new String();
+		File file = new File(System.getProperty("user.dir"));
+		File file2 = new File(file.getParent() + "\\core\\relatedFiles.json");
+		FileSystemResource coverage = new FileSystemResource(file2);
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(coverage.getInputStream()),1024);
+			StringBuilder stringBuilder = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				stringBuilder.append(line).append('\n');
+			}
+			br.close();
+			name = stringBuilder.toString();
+		} catch (Exception e) {
+			e.printStackTrace();;
+		}
+		return name;
+	}
 }

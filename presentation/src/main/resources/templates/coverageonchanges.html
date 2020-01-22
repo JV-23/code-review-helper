@@ -7,6 +7,32 @@
 	
 
 <style>
+#test {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#test td, #test th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 4px;
+  padding-left: 20px;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+#test th {
+  background-color: #f7f7f7;
+}
+
+#test td:hover {
+    background: #fafafa;
+}
+
+#test a{
+	color: #3278de;
+}
 
 </style>
 <head>
@@ -39,8 +65,29 @@
 	</ul>
 
 <main role="main" class="container">
-    
-	
+	<p id="demo"></p>
+	<script th:inline="javascript">
+			function getJSON(path) {
+    return fetch(path).then(response => response.json());
+}
+
+		// load JSON data; then proceed
+		getJSON('/api8').then(data => {
+		    // assign allQuestions with data
+		    var allQuestions = data;  
+			console.log(data);
+			//document.write(allQuestions);
+			//var obj = JSON.parse(data);
+			console.log(data.length);
+			var test = "<table id='test'><tr><th>Files that weren't altered but had coverage changes:</th></tr>";
+			for(var x = 0; x < data.length; x++){
+			 	test += "<tr><td><a href=\"" + data[x].link + "\">" + data[x].name + "</a></td></tr>";
+			} 
+			test += "</table>"
+			document.getElementById("demo").innerHTML = test;
+		})	
+		</script>
+
 	
 	<script th:inline="javascript">
 	    var diff = [[${str}]];

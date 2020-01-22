@@ -234,7 +234,7 @@ public class coreApp
                 	
                 	relatedAreas = coverage.findDeadCode(coverageDifference, areChangesCovered, gitService, repo);
 
-                	System.out.println(relatedAreas);
+                	oc.outputRelatedFiles(relatedAreas, repo);
         			break;
         	}
 
