@@ -77,7 +77,7 @@ public class coverageAnalysis {
 		for (final File fileEntry : folder.listFiles()) {
 			if (fileEntry.isDirectory()) {
 				parseReports(fileEntry, coverage);
-			} 
+			}
 			else {
 				if(fileEntry.getName().endsWith("jacoco.xml")) {
 					File xmlFile = new File(fileEntry.toString());
@@ -281,6 +281,73 @@ public class coverageAnalysis {
 		//System.out.println(outcome);
 		//System.out.println(outcome);
 		return outcome;
+	}
+	
+	public List<ChangedLine> differenceInFile(File folder, String filename, List<ChangedLine> lines) throws Exception {
+		Document doc;
+		for (final File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				differenceInFile(fileEntry, filename, lines);
+			} 
+			else {
+				if(fileEntry.getName().endsWith("jacoco.xml")) {
+					File xmlFile = new File(fileEntry.toString());
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					try{
+						doc = dBuilder.parse(xmlFile);
+					}
+					catch(FileNotFoundException e) {
+						File source = new File(System.getProperty("user.dir") + "\\report.dtd");
+						File dest = new File(fileEntry.getParent() + "\\report.dtd");
+					    FileUtils.copyFile(source, dest);
+					    doc = dBuilder.parse(xmlFile);
+					}
+					doc.normalize();
+					
+
+					NodeList nodeList = doc.getElementsByTagName("sourcefile");
+					for(int i = 0; i < nodeList.getLength(); i++) {
+						Node node = nodeList.item(i);
+						Element element = (Element) node;
+						if(element.getAttribute("name").equals(filename)) {
+							NodeList nodeList2 = node.getChildNodes();
+							for(int j = 0; j < nodeList2.getLength(); j++) {
+								Node node2 = nodeList2.item(j);
+								Element element2 = (Element) node2;
+								if(element2.getAttribute("nr") != "") {
+									ChangedLine c = new ChangedLine();
+									c.setLineNumber(Integer.parseInt(element2.getAttribute("nr")));
+									c.setCoveredInstructions(Integer.parseInt(element2.getAttribute("ci")));
+									c.setMissedInstructions(Integer.parseInt(element2.getAttribute("mi")));
+									c.setCoveredBranches(Integer.parseInt(element2.getAttribute("cb")));
+									c.setMissedBranches(Integer.parseInt(element2.getAttribute("mb")));
+									c.setFilename(filename);
+									lines.add(c);
+								}
+								/*if(element2.getAttribute("nr").equals(entry.getKey().toString())) {
+									ChangedLine changed2 = new ChangedLine();
+									changed2.setLineNumber(Integer.parseInt(element2.getAttribute("nr")));
+									changed2.setCoveredInstructions(Integer.parseInt(element2.getAttribute("ci")));
+									changed2.setMissedInstructions(Integer.parseInt(element2.getAttribute("mi")));
+									changed2.setCoveredBranches(Integer.parseInt(element2.getAttribute("cb")));
+									changed2.setMissedBranches(Integer.parseInt(element2.getAttribute("mb")));
+									changed2.setFilename(file);
+									for(Map.Entry<Integer,String> e : changes.entrySet()) {
+										if(e.getKey().equals(Integer.parseInt(element2.getAttribute("nr")))) {
+											changed2.setChange(e.getValue());
+										}
+										
+									}
+									result.add(changed2);
+								}*/
+							}
+						}
+					}
+				}
+			}
+		}
+		return lines;
 	}
 
 }

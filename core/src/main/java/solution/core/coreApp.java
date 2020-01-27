@@ -235,7 +235,30 @@ public class coreApp
                 	relatedAreas = coverage.findDeadCode(coverageDifference, areChangesCovered, gitService, repo);
 
                 	oc.outputRelatedFiles(relatedAreas, repo);
-        			break;
+                	
+                	for(String s : relatedAreas) {
+                		String file[] = s.split("/");
+                		String filename = file[file.length-1];
+                		
+                		List<ChangedLine> lines = new ArrayList<ChangedLine>();
+                		List<ChangedLine> outputStable = coverage.differenceInFile(new File(System.getProperty("user.dir") + "\\stableVersion"), filename, lines);
+                		
+                		List<ChangedLine> lines2 = new ArrayList<ChangedLine>();
+                		List<ChangedLine> outputPR = coverage.differenceInFile(new File(System.getProperty("user.dir") + "\\PRVersion"), filename, lines2);
+                		
+                		for(ChangedLine c : outputStable) {
+                			for(ChangedLine c2 : outputPR) {
+                				if(c.getLineNumber() == c2.getLineNumber()) {
+                					ChangedLine o = c2.difference(c);
+                					if(o.getCoveredBranches() != 0 || o.getCoveredInstructions() != 0 || o.getMissedBranches() != 0 || o.getMissedInstructions() != 0) {
+                						System.out.println(o);
+                					}
+                				}
+                			}
+                		}
+                		
+                	}
+                	
         	}
 
         	/*

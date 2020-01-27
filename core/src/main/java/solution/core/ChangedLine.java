@@ -64,4 +64,15 @@ public class ChangedLine {
 		result += "change: " + this.getChange() + "\n";
 		return result;
 	}
+	
+	public ChangedLine difference(ChangedLine c) {
+		ChangedLine results = new ChangedLine();
+		results.setMissedInstructions(this.getMissedInstructions() - c.getMissedInstructions());
+		results.setCoveredInstructions(this.getCoveredInstructions() - c.getCoveredInstructions());
+		results.setMissedBranches(this.getMissedBranches() - c.getMissedBranches());
+		results.setCoveredBranches(this.getCoveredBranches() - c.getCoveredBranches());
+		results.setLineNumber(this.getLineNumber());
+		results.setFilename(this.getFilename());
+		return results;
+	}
 }
