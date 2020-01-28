@@ -3,6 +3,7 @@ package solution.core;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -238,6 +239,20 @@ public class coreApp
                 	
                 	for(String s : relatedAreas) {
                 		String file[] = s.split("/");
+                		int i=1;
+                		Map<Integer, String> fileContents = new HashMap<Integer, String>(); 
+                		BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\stableVersion\\" + s));
+            			String line = reader.readLine();
+            			while (line != null) {
+            				//System.out.println(i + "   " + line);
+            				fileContents.put(i, line);
+            				i++;
+            				// read next line
+            				line = reader.readLine();
+            			}
+            			reader.close();
+                		//System.out.println(s);
+                		//System.out.println(fileContents.get(73));
                 		String filename = file[file.length-1];
                 		
                 		List<ChangedLine> lines = new ArrayList<ChangedLine>();
@@ -246,16 +261,52 @@ public class coreApp
                 		List<ChangedLine> lines2 = new ArrayList<ChangedLine>();
                 		List<ChangedLine> outputPR = coverage.differenceInFile(new File(System.getProperty("user.dir") + "\\PRVersion"), filename, lines2);
                 		
+                		List<ChangedLine> coverageChanges = new ArrayList<ChangedLine>();
                 		for(ChangedLine c : outputStable) {
                 			for(ChangedLine c2 : outputPR) {
                 				if(c.getLineNumber() == c2.getLineNumber()) {
                 					ChangedLine o = c2.difference(c);
                 					if(o.getCoveredBranches() != 0 || o.getCoveredInstructions() != 0 || o.getMissedBranches() != 0 || o.getMissedInstructions() != 0) {
-                						System.out.println(o);
+                						coverageChanges.add(o);
                 					}
                 				}
                 			}
                 		}
+                		//System.out.println(coverageChanges);
+                		
+                		Map<Integer, ChangedLine> toOutput = new HashMap<Integer, ChangedLine>();
+                		for(ChangedLine c : coverageChanges) {
+                			ChangedLine change = new ChangedLine();
+            				change.setChange(fileContents.get(c.getLineNumber()));
+            				change.setFilename(filename);
+            				change.setLineNumber(c.getLineNumber());
+            				change.setCoveredBranches(c.getCoveredBranches());
+            				change.setCoveredInstructions(c.getCoveredInstructions());
+            				change.setMissedBranches(c.getMissedBranches());
+            				change.setMissedInstructions(c.getMissedInstructions());
+            				toOutput.put(c.getLineNumber(), change);
+
+                			
+                		}
+                		for(ChangedLine c : coverageChanges) {
+                			int aux = -3;
+                			while(aux < 4) {
+                				ChangedLine change = new ChangedLine();
+                				change.setChange(fileContents.get(c.getLineNumber() + aux));
+                				change.setFilename(filename);
+                				change.setLineNumber(c.getLineNumber() + aux);
+                				change.setCoveredBranches(0);
+                				change.setCoveredInstructions(0);
+                				change.setMissedBranches(0);
+                				change.setMissedInstructions(0);
+                				toOutput.putIfAbsent(c.getLineNumber() + aux, change);
+                    			aux++;
+
+                				
+                				
+                			}
+                		}
+                		System.out.println(toOutput);
                 		
                 	}
                 	
