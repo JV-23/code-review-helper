@@ -244,12 +244,15 @@ public class coreApp
                 	oc.outputRelatedFiles(relatedAreas, repo);
                 	
             		ObjectMapper mapper = new ObjectMapper();
-            		ArrayNode array = JsonNodeFactory.instance.arrayNode();
+            		//ArrayNode array = JsonNodeFactory.instance.arrayNode();
+            		ArrayNode array2 = JsonNodeFactory.instance.arrayNode();
             		JsonNode node = mapper.createObjectNode();
             		JsonNode parent = mapper.createObjectNode();
             		((ObjectNode)parent).put("name", "project");
             		
                 	for(String s : relatedAreas) {
+                		ArrayNode array = JsonNodeFactory.instance.arrayNode();
+
                 		String file[] = s.split("/");
                 		int i=1;
                 		Map<Integer, String> fileContents = new HashMap<Integer, String>(); 
@@ -320,9 +323,10 @@ public class coreApp
                 		}
                 		JsonNode child = mapper.createObjectNode();
             			((ObjectNode)node).put("name", filename);
-            			ArrayNode a = JsonNodeFactory.instance.arrayNode(); 
             			
+
             			for (Map.Entry<Integer,ChangedLine> entry : toOutput.entrySet()) {
+            				ArrayNode a = JsonNodeFactory.instance.arrayNode(); 
 	            			((ObjectNode)child).put("name", "Covered Instructions");
 	            			((ObjectNode)child).put("value", entry.getValue().getCoveredInstructions());
 	            			a.add(child.deepCopy());
@@ -345,22 +349,24 @@ public class coreApp
 	            			((ObjectNode)child).put("value", entry.getValue().getChange());
 	            			a.add(child.deepCopy());
 	                		//System.out.println(toOutput);
-                		
+	            			
+	            			array.add(a.deepCopy());
 
             			}
-            			((ObjectNode)node).set("children", a);
+            			((ObjectNode)node).set("children", array.deepCopy());
             			
-            			array.add(node.deepCopy());
-            			
+            			array2.add(node.deepCopy());
+            			//array2.add(node.deepCopy());
+             			//array.add(node.deepCopy());
 
 
 
                 	}
                 	
-                	((ObjectNode)parent).set("children", array);
+                	//((ObjectNode)parent).set("children", array);
         			//((ObjectNode)node).set("values", array);
                 	
-        			String str = parent.toString();
+        			String str = array2.toString();
         			BufferedWriter writer;
         			
         			try {

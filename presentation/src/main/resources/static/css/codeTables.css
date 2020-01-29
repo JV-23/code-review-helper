@@ -1,0 +1,21 @@
+#test tr, #test td { white-space: pre; }
+
+#test {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+
+
+#test th {
+  background-color: #f7f7f7;
+}
+
+#test td:hover {
+    background: #fafafa;
+}
+
+#test a{
+	color: #3278de;
+}

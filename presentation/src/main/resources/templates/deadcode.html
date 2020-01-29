@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Spring Boot Thymeleaf Hello World Example</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+	<link rel="stylesheet" th:href="@{/css/codeTables.css}"/>
+
+
+
+
+</head>
+
+<body>
+
+	<ul>
+	    <li><a href="/">Home</a></li>
+		<li class="dropdown">
+			<a href="javascript:void(0)" class="dropbtn">Coverage</a>
+		    <div class="dropdown-content">
+				<a href="/stablecoverage">Stable Version Coverage</a>
+				<a href="/pullcoverage">Pull Request Coverage</a>
+				<a href="/coveragediff">Coverage Diff</a>
+			</div>
+		</li>
+		<li><a href="/stabletesttimes">Test Times</a></li>
+		<li><a href="/coverageonchanges">Changed Lines Coverage</a></li>
+		<li><a href="/flamegraphs">Flame Graphs</a></li>
+		<li><a href="/deadcode">Related Coverage</a></li>
+	</ul>
+
+<main role="main" class="container">
+		<p id="demo"></p>
+
+	<script th:inline="javascript">
+			function getJSON(path) {
+    return fetch(path).then(response => response.json());
+}
+
+		// load JSON data; then proceed
+		getJSON('/api9').then(data => {
+		    // assign allQuestions with data
+		    var allQuestions = data;  
+			console.log(data[0].children[5]);
+			//console.log(data[1].length);
+			for(var x = 0; x < data.length; x++){
+			 	var test = "<table id='test'><tr><th>" + data[x].name + "</th></tr>";
+				for(var y = 0; y < data[x].children.length; y++){
+			 		test += "<tr><td>" + data[x].children[y][4].value + data[x].children[y][5].value + "</td></tr>";
+				}
+				test += "</table>"
+				document.getElementById("demo").innerHTML += test;
+
+			}
+		})
+			</script>
+
+
+
+
+</form>
+
+
+			 
+
+
+</main>
+<!-- /.container -->
+</body>
+</html>

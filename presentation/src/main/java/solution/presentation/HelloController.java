@@ -129,4 +129,9 @@ public class HelloController {
 	public String flameGraphs(Model model) {
 		return "flamegraphs";
 	}
+	
+	@GetMapping("/deadcode")
+	public String deadCode(Model model) {
+		return "deadcode";
+	}
 }
