@@ -31,6 +31,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import jdk.jfr.Recording;
 import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
@@ -237,6 +243,12 @@ public class coreApp
 
                 	oc.outputRelatedFiles(relatedAreas, repo);
                 	
+            		ObjectMapper mapper = new ObjectMapper();
+            		ArrayNode array = JsonNodeFactory.instance.arrayNode();
+            		JsonNode node = mapper.createObjectNode();
+            		JsonNode parent = mapper.createObjectNode();
+            		((ObjectNode)parent).put("name", "project");
+            		
                 	for(String s : relatedAreas) {
                 		String file[] = s.split("/");
                 		int i=1;
@@ -306,10 +318,58 @@ public class coreApp
                 				
                 			}
                 		}
-                		System.out.println(toOutput);
+                		JsonNode child = mapper.createObjectNode();
+            			((ObjectNode)node).put("name", filename);
+            			ArrayNode a = JsonNodeFactory.instance.arrayNode(); 
+            			
+            			for (Map.Entry<Integer,ChangedLine> entry : toOutput.entrySet()) {
+	            			((ObjectNode)child).put("name", "Covered Instructions");
+	            			((ObjectNode)child).put("value", entry.getValue().getCoveredInstructions());
+	            			a.add(child.deepCopy());
+	            			
+	            			((ObjectNode)child).put("name", "Missed Instructions");
+	            			((ObjectNode)child).put("value", entry.getValue().getMissedInstructions());
+	            			a.add(child.deepCopy());
+	            			
+	            			((ObjectNode)child).put("name", "Covered Branches");
+	            			((ObjectNode)child).put("value", entry.getValue().getCoveredBranches());
+	            			a.add(child.deepCopy());
+	            			((ObjectNode)child).put("name", "Missed Branches");
+	            			((ObjectNode)child).put("value", entry.getValue().getMissedBranches());
+	            			a.add(child.deepCopy());
+	            			
+	            			((ObjectNode)child).put("name", "Line Number");
+	            			((ObjectNode)child).put("value", entry.getValue().getLineNumber());
+	            			a.add(child.deepCopy());
+	            			((ObjectNode)child).put("name", "Change");
+	            			((ObjectNode)child).put("value", entry.getValue().getChange());
+	            			a.add(child.deepCopy());
+	                		//System.out.println(toOutput);
                 		
+
+            			}
+            			((ObjectNode)node).set("children", a);
+            			
+            			array.add(node.deepCopy());
+            			
+
+
+
                 	}
                 	
+                	((ObjectNode)parent).set("children", array);
+        			//((ObjectNode)node).set("values", array);
+                	
+        			String str = parent.toString();
+        			BufferedWriter writer;
+        			
+        			try {
+        				writer = new BufferedWriter(new FileWriter("deadCode.json"));
+        				writer.write(str);
+        				writer.close();
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
         	}
 
         	/*
