@@ -19,17 +19,18 @@
 
 	<ul>
 	    <li><a href="/">Home</a></li>
+		<li><a href="/coverageonchanges">Changed Lines Coverage</a></li>
+		<li><a href="/deadcode">Related Coverage</a></li>
+		<li><a href="/stabletesttimes">Test Times</a></li>
+		<li><a href="/flamegraphs">Flame Graphs</a></li>
 		<li class="dropdown">
-			<a href="javascript:void(0)" class="dropbtn">Coverage</a>
+			<a href="javascript:void(0)" class="dropbtn">All Coverage Info</a>
 		    <div class="dropdown-content">
 				<a href="/stablecoverage">Stable Version Coverage</a>
 				<a href="/pullcoverage">Pull Request Coverage</a>
 				<a href="/coveragediff">Coverage Diff</a>
 			</div>
 		</li>
-		<li><a href="/stabletesttimes">Test Times</a></li>
-		<li><a href="/coverageonchanges">Changed Lines Coverage</a></li>
-		<li><a href="/flamegraphs">Flame Graphs</a></li>
 	</ul>
 
 <main role="main" class="container">
@@ -43,20 +44,21 @@
             <span th:text="'Options'"></span>
         </h2>
 		<h4>
-            <span th:text="'Coverage - Displays coverage of both versions and differences'"></span>
+			<span th:text="'Changed Lines Coverage - Displays the lines that were altered in the pull request and whether they are covered by the test suite'"></span>
+		</h4>
+		<h4>
+			<span th:text="'Related Coverage - Lines that were not altered but had coverage changes'"></span>
 		</h4>
 		<h4>
             <span th:text="'Test Times - Displays the test time differences between both versions'"></span>
         </h4>	
 		<h4>
-			<span th:text="'Changed Lines Coverage - Displays the lines that were altered in the pull request and whether they are covered by the test suite'"></span>
-		</h4>
-		<h4>
 			<span th:text="'Flame Graphs - Displays flame graphs representing the execution of the tests of both versions'"></span>
 		</h4>
-	
+		<h4>
+            <span th:text="'All Coverage Info - Displays coverage of both versions and differences'"></span>
+		</h4>
     </div>
-
 			 
 
 
