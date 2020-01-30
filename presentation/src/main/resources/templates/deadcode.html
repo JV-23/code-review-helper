@@ -46,12 +46,20 @@
 		getJSON('/api9').then(data => {
 		    // assign allQuestions with data
 		    var allQuestions = data;  
-			console.log(data[0].children[5]);
-			//console.log(data[1].length);
+			console.log(data[0].children[0]);
+			console.log(data[0].children[1]);
 			for(var x = 0; x < data.length; x++){
-			 	var test = "<table id='test'><tr><th>" + data[x].name + "</th></tr>";
+			 	var test = "<table id='test'><tr><th colspan=\"4\">" + data[x].name + "</th></tr>";
 				for(var y = 0; y < data[x].children.length; y++){
-			 		test += "<tr><td>" + data[x].children[y][4].value + data[x].children[y][5].value + "</td></tr>";
+			 		test += "<tr><td>" + data[x].children[y][4].value + "</td>";
+					test += "<td>" + data[x].children[y][5].value + "</td>";
+					if(data[x].children[y][0].value != 0){
+						test += "<td>" + "Covered Instructions: " + data[x].children[y][0].value + "</td>"
+					}
+					if(data[x].children[y][2].value != 0){
+						test += "<td>" + "Covered Branches: " + data[x].children[y][2].value + "</td>"
+					}
+					test += "</tr>";
 				}
 				test += "</table>"
 				document.getElementById("demo").innerHTML += test;
