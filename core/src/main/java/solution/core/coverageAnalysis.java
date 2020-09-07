@@ -246,7 +246,13 @@ public class coverageAnalysis {
 			for(Map.Entry<String, coverageResults> entry2 : beforeMap.entrySet()) {
 				if(entry2.getKey().equals(entry.getKey())) {
 					results = entry.getValue().difference(entry2.getValue());
-					diff.put(entry2.getKey(), results);
+					if((results.getCoveredBranches() == 0) && (results.getCoveredComplexity() == 0)
+							&& (results.getMissedInstructions() == 0) && (results.getCoveredLines() == 0)
+							&& (results.getCoveredMethods() == 0)) {
+						;
+					}
+					else
+						diff.put(entry2.getKey(), results);
 				}
 			}
 		}	
@@ -273,12 +279,10 @@ public class coverageAnalysis {
 			coverageChanged.add(file + ".java");
 		}
 		coverageChanged.removeAll(codeChanged);
-		
 		gitService.retrieveRepositoryFilesNames(null, "", repo);
 		for(String s : coverageChanged) {
 			outcome.add(gitService.findFile(s));
 		}
-		//System.out.println(outcome);
 		//System.out.println(outcome);
 		return outcome;
 	}

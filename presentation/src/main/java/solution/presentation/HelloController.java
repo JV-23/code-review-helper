@@ -110,7 +110,7 @@ public class HelloController {
 	public String coverageOnChanges(Model model) throws ClassNotFoundException, IOException {
 		Map<String, String> diff = new HashMap<String, String>();
 		File file = new File(System.getProperty("user.dir"));
-		FileInputStream fi = new FileInputStream(new File(file.getParent() + "\\core\\diffs"));
+		FileInputStream fi = new FileInputStream(new File(file.getParent() + "\/core\/diffs"));
 		ObjectInputStream oi = new ObjectInputStream(fi);
 
 		// Read objects

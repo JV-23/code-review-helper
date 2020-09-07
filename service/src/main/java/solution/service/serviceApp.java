@@ -6,8 +6,10 @@ import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -49,6 +51,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.yaml.snakeyaml.Yaml;
+
 /**
  * Hello world!
  *
@@ -61,9 +65,31 @@ public class serviceApp
 	private PullRequestService prs = new PullRequestService(client);
 	private List<String> changedFiles = new ArrayList<String>();
 	private List<String> repoFiles = new ArrayList<String>();
+	private String repoUrl = null;
 	
 	public serviceApp() {
-		client.setOAuth2Token("3d64bbf822b565f5cdce10c24ca090fef080bff1");
+		//client.setOAuth2Token("7fa72cf41cb0c3cc8230197852cfd24663e04d03 ");
+		Yaml yaml = new Yaml();
+		boolean b = false;
+		try{
+			System.out.println(System.getProperty("user.dir"));
+			InputStream inputStream = new FileInputStream(System.getProperty("user.dir") + "\\config.yml");		
+			Map<String, Object> obj = yaml.load(inputStream);
+			for(Map.Entry<String, Object> entry : obj.entrySet()){
+				if(entry.getKey().equals("token")){
+					//System.out.println(entry.getValue().toString());
+					client.setOAuth2Token(entry.getValue().toString());
+					b = true;
+				}
+			}
+		}
+		catch(Exception e){
+			System.out.println("exception caught -----------------------");
+		}
+
+		if(b == false){
+			System.out.println("Client not authenticated due to possible problem with config.yml file, this reduces the amount of git requests available.");
+		}
 	}
 	
 	public List<String> getChangedFiles(){
@@ -73,11 +99,15 @@ public class serviceApp
 	public List<String> getRepoFiles(){
 		return repoFiles;
 	}	
+
+	public void setAppCredentials(String username, String password){
+		client.setCredentials(username, password);
+	}
+
 	public String downloadStableVersion() throws Exception{
 		Console cnsl = null;
 		String username = null;
 		char[] pwd = null;
-		String repoUrl = null;
 	      
 		try {
 			// creates a console object
@@ -96,8 +126,30 @@ public class serviceApp
 		catch(Exception ex) {
 			ex.printStackTrace();      
 		}
-		
-		CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(username, pwd);
+
+		//client.setCredentials(username, String.valueOf(pwd));
+
+		new File(System.getProperty("user.dir") + "\\stableVersion").mkdir();
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.command("cmd.exe", "/c", "cd stableVersion && git clone " + repoUrl + " .");
+
+		try {
+			processBuilder.redirectErrorStream(true);
+			Process process = processBuilder.start();
+			BufferedReader reader =  new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line = "";
+			while((line = reader.readLine()) != null) {
+				System.out.println(line);
+			}
+
+			process.waitFor();
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		/*CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(username, pwd);
 		String cloneDirectoryPath = System.getProperty("user.dir") + "\\stableVersion";
 				
 		try {
@@ -112,7 +164,7 @@ public class serviceApp
 		} catch (GitAPIException e) {
 		    System.out.println("Exception occurred while cloning repo (probably a wrong password, or you"
 		    		+ " don't have the necessary permissions to acess the repo)");
-		}
+		}*/
 		
 		return repoUrl;
 	}
@@ -122,7 +174,7 @@ public class serviceApp
         //String command = "cmd.exe /c cd stableVersion && mvn test";
         
         ProcessBuilder proc = new ProcessBuilder();
-        proc.command("cmd.exe", "/c", "cd stableVersion && mvn test -fae");
+        proc.command("cmd.exe", "/c", "cd stableVersion && mvn test -fn");
         proc.redirectErrorStream(true);
         Process process = proc.start();
 
@@ -141,35 +193,41 @@ public class serviceApp
 	
 	
 	public int downloadPRVersion() throws Exception{
-		 	String command = "cmd.exe /c robocopy stableVersion PRVersion /MIR";
-	        
-	        Process proc = Runtime.getRuntime().exec(command);
+		 	new File(System.getProperty("user.dir") + "\\PRVersion").mkdir();
 
-	        System.out.println("Copying files:");
+			ProcessBuilder processBuilder = new ProcessBuilder();
+			processBuilder.command("cmd.exe", "/c", "cd PRVersion && git clone " + repoUrl + " .");
 
-	        // Read the output
-	        BufferedReader reader =  new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			try {
+				processBuilder.redirectErrorStream(true);
+				Process process = processBuilder.start();
+				BufferedReader reader =  new BufferedReader(new InputStreamReader(process.getInputStream()));
+				String line = "";
+				while((line = reader.readLine()) != null) {
+					System.out.println(line);
+				}
 
-	        String line = "";
-	        while((line = reader.readLine()) != null) {
-	            System.out.println(line);
-	        }
-	        
-	        proc.waitFor();
+				process.waitFor();
+
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 	        
 	        Scanner scan = new Scanner(System.in);
 	        System.out.println("Enter the number of the pull request you want to analyze:");
 	        
 	        String myNumber = scan.nextLine();
 	  
-	        ProcessBuilder processBuilder = new ProcessBuilder();
-	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git fetch origin pull/" + myNumber + "/head && git checkout -b pull-request FETCH_HEAD");
+	        processBuilder = new ProcessBuilder();
+	        processBuilder.command("cmd.exe", "/c", "cd PRVersion && git pull " + repoUrl + " refs/pull/" + myNumber + "/head");
+	        
 	        
 	        try {
 	        	processBuilder.redirectErrorStream(true);
 	        	Process process = processBuilder.start();
-	        	reader =  new BufferedReader(new InputStreamReader(process.getInputStream()));
-	        	line = "";
+	        	BufferedReader reader =  new BufferedReader(new InputStreamReader(process.getInputStream()));
+	        	String line = "";
 		        while((line = reader.readLine()) != null) {
 		            System.out.println(line);
 		        }
@@ -190,7 +248,7 @@ public class serviceApp
         
         //Process proc = Runtime.getRuntime().exec(command);
         ProcessBuilder proc = new ProcessBuilder();
-        proc.command("cmd.exe", "/c", "cd PRVersion && mvn test -fae");
+        proc.command("cmd.exe", "/c", "cd PRVersion && mvn test -fn");
         proc.redirectErrorStream(true);
         
         Process process = proc.start();
@@ -215,11 +273,12 @@ public class serviceApp
 		String result2 = "";
 		Map<String, String> diff = new HashMap<String, String>();
 		Integer i = 1;
+		int j = 1;
 		List<changedLines> lines = new ArrayList<changedLines>();
 		Repository pubRepo = repService.getRepository(parts[3], parts[4]);
 		List<RepositoryCommit> prCommits = new ArrayList<RepositoryCommit>();
 		//System.out.println("------");
-		for(PullRequest pr : prs.getPullRequests(pubRepo, "closed")) {
+		for(PullRequest pr : prs.getPullRequests(pubRepo, "open")) {
 			//System.out.println(pr.getTitle());
 			//System.out.println(" ------------------------ ");
 			prCommits = prs.getCommits(pubRepo, pr.getNumber());
@@ -234,6 +293,10 @@ public class serviceApp
 						lines.add(filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()));
 						result = parseChange(new File(System.getProperty("user.dir") + "\\PRVersion"), filterChangedFilePatchAdditions(f.getPatch(), f.getFilename()), result2);
 						//System.out.println(result);
+						if(result.equals("")){
+							result = "No Coverage" + j;
+							j++;
+						}
 						diff.put(result, "--- " + f.getFilename() + "\n+++ " + f.getFilename() +"\n" + f.getPatch());
 						i++;
 					}
@@ -421,6 +484,7 @@ public void retrieveRepositoryFilesNames(String path, String fileToFind, String 
 				}
 				else {
 					this.repoFiles.add(repContent.getPath());
+					System.out.println("Loading repo files...");
 				}
 			}
 		} catch (IOException e) {

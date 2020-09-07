@@ -53,12 +53,16 @@
 			console.log(data.length);
 			var test = "<table id='test'><tr><th>Files that weren't altered but had coverage changes:</th></tr>";
 			for(var x = 0; x < data.length; x++){
-			 	test += "<tr><td><a href=\"" + data[x].link + "\">" + data[x].link + "</a></td></tr>";
+			 	test += "<tr><td><a href=\"" + data[x].link + "\">" + data[x].name + "</a></td></tr>";
 			} 
 			test += "</table>"
 			document.getElementById("demo").innerHTML = test;
 		})	
 		</script>
+
+				<h4>
+            <span th:text="'The following are the code changes introduced by the pull request. Before each change is displayed, there is a list of how that change is covered.'"></span>
+		</h4>
 
 	
 	<script th:inline="javascript">

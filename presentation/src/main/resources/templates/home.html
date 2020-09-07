@@ -41,22 +41,22 @@
     <div class="starter-template">
         <h1>Analysis of pull request</h1>
         <h2>
-            <span th:text="'Options'"></span>
+            <span th:text="'Instructions'"></span>
         </h2>
 		<h4>
-			<span th:text="'Changed Lines Coverage - Displays the lines that were altered in the pull request and whether they are covered by the test suite'"></span>
+			<span th:text="'Changed Lines Coverage - Displays the lines that were altered in the pull request (same way as GitHub) and whether they are covered by the test suite. Also has direct GitHub links to any other files whose coverage has changed (if any)'"></span>
 		</h4>
 		<h4>
-			<span th:text="'Related Coverage - Lines that were not altered but had coverage changes'"></span>
+			<span th:text="'Related Coverage - Displays the coverage information in files that were not altered but had coverage changes (could be empty if no changes are introduced by the pull request)'"></span>
 		</h4>
 		<h4>
-            <span th:text="'Test Times - Displays the test time differences between both versions'"></span>
+            <span th:text="'Test Times - Displays the test time differences between both versions. Table entries are color coded for easier recognition. Green means improvement, red means the test was slower, yellow means no significant change.'"></span>
         </h4>	
 		<h4>
-			<span th:text="'Flame Graphs - Displays flame graphs representing the execution of the tests of both versions'"></span>
+			<span th:text="'Flame Graphs - Displays flame graphs representing the execution profile of the tests of both versions'"></span>
 		</h4>
 		<h4>
-            <span th:text="'All Coverage Info - Displays coverage of both versions and differences'"></span>
+            <span th:text="'All Coverage Info - Displays a tree containing the coverage of both versions and differences'"></span>
 		</h4>
     </div>
 			 

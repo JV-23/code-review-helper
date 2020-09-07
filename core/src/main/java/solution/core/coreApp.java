@@ -17,11 +17,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.io.Console;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,9 +55,9 @@ public class coreApp
 	static String repo;
 	static int pullRequestNumber;
 	
-	Map<String, String> stableTestTimes = new HashMap<String, String>();
-	Map<String, String> pullRequestTestTimes = new HashMap<String, String>();
-	Map<String, String> testDifferences = new HashMap<String, String>();
+	Map<String, String> stableTestTimes = new LinkedHashMap<String, String>();
+	Map<String, String> pullRequestTestTimes = new LinkedHashMap<String, String>();
+	Map<String, String> testDifferences = new LinkedHashMap<String, String>();
 	static List<File> stableVersionFolders = new ArrayList<File>();
 	static List<File> PRVersionFolders = new ArrayList<File>();
 	
@@ -96,6 +98,12 @@ public class coreApp
 				testDifferences.put(stableEntry.getKey(), "???");
 			}
 		}
+
+        for(Map.Entry<String, String> pullEntry:pullRequestTestTimes.entrySet()) {
+            if(!testDifferences.containsKey(pullEntry.getKey())) {
+                testDifferences.put(pullEntry.getKey(), "New!!");
+            }
+        }
 	}
 	
 	public void runDduMetric() throws Exception {
@@ -205,7 +213,17 @@ public class coreApp
         			String repo = in2.nextLine();
         			System.out.println("Please enter pull request number: ");
         			int number = in2.nextInt();
-        			/*gitService.runStableVersionTests();
+
+                    Console cnsl = System.console();
+        
+                   // read line from the user input
+                    //String username = cnsl.readLine("Insert your GitHub Username: ");
+                    // read password into the char array
+                    //char[] pwd = cnsl.readPassword("Insert your GitHub Password: ");
+
+                    //gitService.setAppCredentials(username, String.valueOf(pwd));
+        			
+        			gitService.runStableVersionTests();
                 	gitService.runPRVersionTests();
                 	
                 	coreService.stableVersionTestPerformance();
@@ -214,12 +232,16 @@ public class coreApp
                 	
         			ott.output(coreService.getStableVersionTestTimes(), "stableTestTimes.json");
                 	ott.output(coreService.getTestDifferences(), "timeDifferences.json");
-
+					
+					/*************************************************************************************/
                 	coreService.generateTrace(System.getProperty("user.dir") + "\\PRVersion\\recording.jfr", "prprofile");
                 	coreService.generateTrace(System.getProperty("user.dir") + "\\stableVersion\\recording.jfr", "stableprofile");
-					*/
+					/************************************************************************************
+					************
+					******************
+					************/
         			
-                	//coverage.generateReports();
+                	coverage.generateReports();
                 	stableCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\stableVersion"), new HashMap<String, coverageResults>());
             		pullRequestCoverage = coverage.parseReports(new File(System.getProperty("user.dir") + "\\PRVersion"), new HashMap<String, coverageResults>());
             		oc.output(stableCoverage, "stableCoverage.json");
@@ -228,7 +250,7 @@ public class coreApp
             		coverageDifference = coverage.difference(stableCoverage, pullRequestCoverage);
             		oc.output(coverageDifference, "coverageDifference.json");
                 	
-                	areChangesCovered = coverage.checkIfChangesAreCovered(repo, number);
+                	areChangesCovered = coverage.checkIfChangesAreCovered(repo, number); //outputs diffs
                 	//areChangesCovered = coverage.checkIfChangesAreCovered("https://github.com/bonigarcia/webdrivermanager", 414);
                 	
                 	//gitService.retrieveRepositoryFilesNames(null, "Preferences.java");
@@ -240,9 +262,12 @@ public class coreApp
                 	//System.out.println(areChangesCovered);
                 	
                 	relatedAreas = coverage.findDeadCode(coverageDifference, areChangesCovered, gitService, repo);
+	                relatedAreas.removeAll(Arrays.asList("", null));
 
-                	oc.outputRelatedFiles(relatedAreas, repo);
-                	
+	                System.out.println(relatedAreas);
+	                		
+	                oc.outputRelatedFiles(relatedAreas, repo);
+
             		ObjectMapper mapper = new ObjectMapper();
             		//ArrayNode array = JsonNodeFactory.instance.arrayNode();
             		ArrayNode array2 = JsonNodeFactory.instance.arrayNode();
