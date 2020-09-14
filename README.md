@@ -1,6 +1,9 @@
 # Code Review Helper
 Windows only, certain command line commands are called and don't work on Linux. 
 
+Before running:
+If you want to authenticate, go to the config.yml file on the 'core' folder, and replace the 'insert token here' text with your own git authentication token.
+
 How to run:
 1) Open a command line
 2) Go to the 'service' folder and run 'mvn install'
