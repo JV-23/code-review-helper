@@ -1,8 +1,10 @@
 # Code Review Helper
-Windows only, certain command line commands are called and don't work on Linux. 
 
 Before running:
 If you want to authenticate, go to the config.yml file on the 'core' folder, and replace the 'insert token here' text with your own git authentication token. Not doing this will limit the amount of requests the tool can make.
+Authentication isn't required but without it the request limits can be reached and the tool might not function properly.
+Windows only, certain command line commands are called and don't work on Linux. 
+Java 13 required
 
 How to run:
 1) Open a command line
