@@ -115,9 +115,9 @@ public class serviceApp
 			
 			if (cnsl != null) {
 			   // read line from the user input
-				username = cnsl.readLine("Insert your GitHub Username: ");
+				//username = cnsl.readLine("Insert your GitHub Username: ");
 				// read password into the char array
-				pwd = cnsl.readPassword("Insert your GitHub Password: ");
+				//pwd = cnsl.readPassword("Insert your GitHub Password: ");
 				//read the url of the repository
 				repoUrl = cnsl.readLine("Insert the url of the repository you want to access:");
 			} 
